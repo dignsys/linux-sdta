@@ -389,6 +389,15 @@ static inline struct smack_known *smk_of_current(void)
 	return smk_of_task(current_security());
 }
 
+#ifdef CONFIG_SECURITY_SMACK_PERMISSIVE_MODE
+/*
+ * permissive mode
+ */
+#define SMACK_PERMISSIVE_DENIED 0x0
+#define SMACK_PERMISSIVE_ALLOWED 0x1
+extern int permissive_mode;
+#endif
+
 /*
  * logging functions
  */
