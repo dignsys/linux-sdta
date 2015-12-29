@@ -797,6 +797,7 @@ static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
 		ret = -EINVAL;
 	} else if (!io_data->aio) {
 		DECLARE_COMPLETION_ONSTACK(done);
+		bool interrupted = false;
 
 		req = ep->req;
 		req->buf      = data;
@@ -812,9 +813,14 @@ static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
 		spin_unlock_irq(&epfile->ffs->eps_lock);
 
 		if (unlikely(wait_for_completion_interruptible(&done))) {
-			ret = -EINTR;
+			/*
+			 * To avoid race condition with ffs_epfile_io_complete,
+			 * dequeue the request first then check
+			 * status. usb_ep_dequeue API should guarantee no race
+			 * condition with req->complete callback.
+			 */
 			usb_ep_dequeue(ep->ep, req);
-			goto error_mutex;
+			interrupted = ep->status < 0;
 		}
 
 		/*
@@ -824,7 +830,7 @@ static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
 		 * to maxpacketsize), we may end up with more
 		 * data then user space has space for.
 		 */
-		ret = ep->status;
+		ret = interrupted ? -EINTR : ep->status;
 		if (io_data->read && ret > 0) {
 			ret = copy_to_iter(data, ret, &io_data->data);
 			if (!ret)
