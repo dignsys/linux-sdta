@@ -208,10 +208,10 @@ int kernfs_iop_removexattr(struct dentry *dentry, const char *name)
 	return simple_xattr_remove(&attrs->xattrs, name);
 }
 
-ssize_t kernfs_iop_getxattr(struct dentry *dentry, const char *name, void *buf,
-			    size_t size)
+ssize_t kernfs_iop_getxattr(struct dentry *unused, struct inode *inode,
+			    const char *name, void *buf, size_t size)
 {
-	struct kernfs_node *kn = dentry->d_fsdata;
+	struct kernfs_node *kn = inode->i_private;
 	struct kernfs_iattrs *attrs;
 
 	attrs = kernfs_iattrs(kn);
