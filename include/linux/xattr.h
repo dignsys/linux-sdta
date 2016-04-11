@@ -26,7 +26,8 @@ struct xattr_handler {
 		       char *list, size_t list_size, const char *name,
 		       size_t name_len);
 	int (*get)(const struct xattr_handler *, struct dentry *dentry,
-		   const char *name, void *buffer, size_t size);
+		   struct inode *inode, const char *name, void *buffer,
+		   size_t size);
 	int (*set)(const struct xattr_handler *, struct dentry *dentry,
 		   const char *name, const void *buffer, size_t size,
 		   int flags);

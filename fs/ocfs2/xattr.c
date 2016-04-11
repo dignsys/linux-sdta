@@ -7244,12 +7244,12 @@ static size_t ocfs2_xattr_security_list(const struct xattr_handler *handler,
 }
 
 static int ocfs2_xattr_security_get(const struct xattr_handler *handler,
-				    struct dentry *dentry, const char *name,
-				    void *buffer, size_t size)
+				    struct dentry *unused, struct inode *inode,
+				    const char *name, void *buffer, size_t size)
 {
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
-	return ocfs2_xattr_get(d_inode(dentry), OCFS2_XATTR_INDEX_SECURITY,
+	return ocfs2_xattr_get(inode, OCFS2_XATTR_INDEX_SECURITY,
 			       name, buffer, size);
 }
 
@@ -7340,12 +7340,12 @@ static size_t ocfs2_xattr_trusted_list(const struct xattr_handler *handler,
 }
 
 static int ocfs2_xattr_trusted_get(const struct xattr_handler *handler,
-				   struct dentry *dentry, const char *name,
-				   void *buffer, size_t size)
+				   struct dentry *unused, struct inode *inode,
+				   const char *name, void *buffer, size_t size)
 {
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
-	return ocfs2_xattr_get(d_inode(dentry), OCFS2_XATTR_INDEX_TRUSTED,
+	return ocfs2_xattr_get(inode, OCFS2_XATTR_INDEX_TRUSTED,
 			       name, buffer, size);
 }
 
@@ -7391,16 +7391,16 @@ static size_t ocfs2_xattr_user_list(const struct xattr_handler *handler,
 }
 
 static int ocfs2_xattr_user_get(const struct xattr_handler *handler,
-				struct dentry *dentry, const char *name,
-				void *buffer, size_t size)
+				struct dentry *unusde, struct inode *inode,
+				const char *name, void *buffer, size_t size)
 {
-	struct ocfs2_super *osb = OCFS2_SB(dentry->d_sb);
+	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
 
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
 	if (osb->s_mount_opt & OCFS2_MOUNT_NOUSERXATTR)
 		return -EOPNOTSUPP;
-	return ocfs2_xattr_get(d_inode(dentry), OCFS2_XATTR_INDEX_USER, name,
+	return ocfs2_xattr_get(inode, OCFS2_XATTR_INDEX_USER, name,
 			       buffer, size);
 }
 

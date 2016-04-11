@@ -31,14 +31,14 @@ ext2_xattr_user_list(const struct xattr_handler *handler,
 
 static int
 ext2_xattr_user_get(const struct xattr_handler *handler,
-		    struct dentry *dentry, const char *name,
-		    void *buffer, size_t size)
+		    struct dentry *unused, struct inode *inode,
+		    const char *name, void *buffer, size_t size)
 {
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
-	if (!test_opt(dentry->d_sb, XATTR_USER))
+	if (!test_opt(inode->i_sb, XATTR_USER))
 		return -EOPNOTSUPP;
-	return ext2_xattr_get(d_inode(dentry), EXT2_XATTR_INDEX_USER,
+	return ext2_xattr_get(inode, EXT2_XATTR_INDEX_USER,
 			      name, buffer, size);
 }
 

@@ -29,12 +29,12 @@ ext2_xattr_trusted_list(const struct xattr_handler *handler,
 
 static int
 ext2_xattr_trusted_get(const struct xattr_handler *handler,
-		       struct dentry *dentry, const char *name,
-		       void *buffer, size_t size)
+		       struct dentry *unused, struct inode *inode,
+		       const char *name, void *buffer, size_t size)
 {
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
-	return ext2_xattr_get(d_inode(dentry), EXT2_XATTR_INDEX_TRUSTED, name,
+	return ext2_xattr_get(inode, EXT2_XATTR_INDEX_TRUSTED, name,
 			      buffer, size);
 }
 

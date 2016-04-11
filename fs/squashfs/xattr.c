@@ -225,13 +225,15 @@ static size_t squashfs_xattr_handler_list(const struct xattr_handler *handler,
 }
 
 static int squashfs_xattr_handler_get(const struct xattr_handler *handler,
-				      struct dentry *d, const char *name,
+				      struct dentry *unused,
+				      struct inode *inode,
+				      const char *name,
 				      void *buffer, size_t size)
 {
 	if (name[0] == '\0')
 		return  -EINVAL;
 
-	return squashfs_xattr_get(d_inode(d), handler->flags, name,
+	return squashfs_xattr_get(inode, handler->flags, name,
 		buffer, size);
 }
 

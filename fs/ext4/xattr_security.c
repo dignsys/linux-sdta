@@ -30,12 +30,12 @@ ext4_xattr_security_list(const struct xattr_handler *handler,
 
 static int
 ext4_xattr_security_get(const struct xattr_handler *handler,
-			struct dentry *dentry, const char *name,
-			void *buffer, size_t size)
+			struct dentry *unused, struct inode *inode,
+			const char *name, void *buffer, size_t size)
 {
 	if (strcmp(name, "") == 0)
 		return -EINVAL;
-	return ext4_xattr_get(d_inode(dentry), EXT4_XATTR_INDEX_SECURITY,
+	return ext4_xattr_get(inode, EXT4_XATTR_INDEX_SECURITY,
 			      name, buffer, size);
 }
 
