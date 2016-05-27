@@ -416,10 +416,11 @@ ssize_t btrfs_getxattr(struct dentry *dentry, struct inode *inode,
 	return __btrfs_getxattr(inode, name, buffer, size);
 }
 
-int btrfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+int btrfs_setxattr(struct dentry *dentry, struct inode *inode,
+		   const char *name, const void *value,
 		   size_t size, int flags)
 {
-	struct btrfs_root *root = BTRFS_I(d_inode(dentry))->root;
+	struct btrfs_root *root = BTRFS_I(inode)->root;
 	int ret;
 
 	/*
@@ -435,20 +436,21 @@ int btrfs_setxattr(struct dentry *dentry, const char *name, const void *value,
 	 * for it via sb->s_xattr.
 	 */
 	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
-		return generic_setxattr(dentry, name, value, size, flags);
+		return generic_setxattr(dentry, inode, name, value,
+					size, flags);
 
 	ret = btrfs_is_valid_xattr(name);
 	if (ret)
 		return ret;
 
 	if (!strncmp(name, XATTR_BTRFS_PREFIX, XATTR_BTRFS_PREFIX_LEN))
-		return btrfs_set_prop(d_inode(dentry), name,
+		return btrfs_set_prop(inode, name,
 				      value, size, flags);
 
 	if (size == 0)
 		value = "";  /* empty EA, do not remove */
 
-	return __btrfs_setxattr(NULL, d_inode(dentry), name, value, size,
+	return __btrfs_setxattr(NULL, inode, name, value, size,
 				flags);
 }
 

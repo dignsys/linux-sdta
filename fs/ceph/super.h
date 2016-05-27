@@ -794,8 +794,8 @@ extern int ceph_getattr(struct vfsmount *mnt, struct dentry *dentry,
 			struct kstat *stat);
 
 /* xattr.c */
-extern int ceph_setxattr(struct dentry *, const char *, const void *,
-			 size_t, int);
+extern int ceph_setxattr(struct dentry *, struct inode *, const char *,
+			 const void *, size_t, int);
 int __ceph_setxattr(struct dentry *, const char *, const void *, size_t, int);
 ssize_t __ceph_getxattr(struct inode *, const char *, void *, size_t);
 int __ceph_removexattr(struct dentry *, const char *);

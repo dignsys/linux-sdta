@@ -97,8 +97,9 @@ remove_ea_exit:
 	return rc;
 }
 
-int cifs_setxattr(struct dentry *direntry, const char *ea_name,
-		  const void *ea_value, size_t value_size, int flags)
+int cifs_setxattr(struct dentry *direntry, struct inode *inode,
+		  const char *ea_name, const void *ea_value, size_t value_size,
+		  int flags)
 {
 	int rc = -EOPNOTSUPP;
 #ifdef CONFIG_CIFS_XATTR
@@ -113,7 +114,7 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
 		return -EIO;
 	if (d_really_is_negative(direntry))
 		return -EIO;
-	sb = d_inode(direntry)->i_sb;
+	sb = inode->i_sb;
 	if (sb == NULL)
 		return -EIO;
 
@@ -177,12 +178,12 @@ int cifs_setxattr(struct dentry *direntry, const char *ea_name,
 			memcpy(pacl, ea_value, value_size);
 			if (pTcon->ses->server->ops->set_acl)
 				rc = pTcon->ses->server->ops->set_acl(pacl,
-						value_size, d_inode(direntry),
+						value_size, inode,
 						full_path, CIFS_ACL_DACL);
 			else
 				rc = -EOPNOTSUPP;
 			if (rc == 0) /* force revalidate of the inode */
-				CIFS_I(d_inode(direntry))->time = 0;
+				CIFS_I(inode)->time = 0;
 			kfree(pacl);
 		}
 #else

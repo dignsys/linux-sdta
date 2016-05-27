@@ -2603,10 +2603,11 @@ static ssize_t shmem_getxattr(struct dentry *dentry, struct inode *inode,
 	return simple_xattr_get(&info->xattrs, name, buffer, size);
 }
 
-static int shmem_setxattr(struct dentry *dentry, const char *name,
-			  const void *value, size_t size, int flags)
+static int shmem_setxattr(struct dentry *dentry, struct inode *inode,
+			  const char *name, const void *value, size_t size,
+			  int flags)
 {
-	struct shmem_inode_info *info = SHMEM_I(d_inode(dentry));
+	struct shmem_inode_info *info = SHMEM_I(inode);
 	int err;
 
 	/*
@@ -2615,7 +2616,8 @@ static int shmem_setxattr(struct dentry *dentry, const char *name,
 	 * for it via sb->s_xattr.
 	 */
 	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
-		return generic_setxattr(dentry, name, value, size, flags);
+		return generic_setxattr(dentry, inode, name, value, size,
+					flags);
 
 	err = shmem_xattr_validate(name);
 	if (err)

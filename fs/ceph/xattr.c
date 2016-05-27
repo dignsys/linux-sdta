@@ -1027,14 +1027,15 @@ out:
 	return err;
 }
 
-int ceph_setxattr(struct dentry *dentry, const char *name,
+int ceph_setxattr(struct dentry *dentry, struct inode *inode, const char *name,
 		  const void *value, size_t size, int flags)
 {
-	if (ceph_snap(d_inode(dentry)) != CEPH_NOSNAP)
+	if (ceph_snap(inode) != CEPH_NOSNAP)
 		return -EROFS;
 
 	if (!strncmp(name, XATTR_SYSTEM_PREFIX, XATTR_SYSTEM_PREFIX_LEN))
-		return generic_setxattr(dentry, name, value, size, flags);
+		return generic_setxattr(dentry, inode, name, value, size,
+					flags);
 
 	if (size == 0)
 		value = "";  /* empty EA, do not remove */
