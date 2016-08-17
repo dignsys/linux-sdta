@@ -794,6 +794,8 @@
 		power-on-delay= <50>;
 		reset-delay = <100>;
 		init-delay = <100>;
+		panel-width-mm = <63>;
+		panel-height-mm = <111>;
 		display-timings {
 			timing-0 {
 				clock-frequency = <130361520>;
