@@ -1034,11 +1034,19 @@ static int compat_drm_mode_addfb2(struct file *file, unsigned int cmd,
 	struct drm_mode_fb_cmd232 __user *argp = (void __user *)arg;
 	struct drm_mode_fb_cmd232 req32;
 	struct drm_mode_fb_cmd2 __user *req64;
+	unsigned int usize, asize, drv_size;
 	int i;
 	int err;
 
-	if (copy_from_user(&req32, argp, sizeof(req32)))
+	drv_size = sizeof(req32);
+	usize = _IOC_SIZE(cmd);
+	asize = max(usize, drv_size);
+
+	if (copy_from_user(&req32, argp, usize))
 		return -EFAULT;
+
+	if (asize > usize)
+		memset((char *)&req32 + usize, 0, asize - usize);
 
 	req64 = compat_alloc_user_space(sizeof(*req64));
 
@@ -1067,7 +1075,7 @@ static int compat_drm_mode_addfb2(struct file *file, unsigned int cmd,
 	if (__get_user(req32.fb_id, &req64->fb_id))
 		return -EFAULT;
 
-	if (copy_to_user(argp, &req32, sizeof(req32)))
+	if (copy_to_user(argp, &req32, usize))
 		return -EFAULT;
 
 	return 0;
