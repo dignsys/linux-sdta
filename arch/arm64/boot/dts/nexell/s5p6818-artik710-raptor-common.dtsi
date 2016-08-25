@@ -493,6 +493,13 @@
 			linux,code = <KEY_WAKEUP>;
 			gpio-key,wakeup;
 		};
+
+		keyback {
+			label = "Back";
+			gpios = <&gpio_a 30 1>;
+			linux,code = <KEY_BACK>;
+			gpio-key;
+		};
 	};
 
 	spdif_out: spdif-out {
