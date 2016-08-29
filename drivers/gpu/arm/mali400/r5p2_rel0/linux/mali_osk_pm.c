@@ -15,9 +15,7 @@
 
 #include <linux/sched.h>
 
-#ifdef CONFIG_PM_RUNTIME
 #include <linux/pm_runtime.h>
-#endif /* CONFIG_PM_RUNTIME */
 #include <linux/platform_device.h>
 #include <linux/version.h>
 #include "mali_osk.h"

@@ -49,7 +49,7 @@ endchoice
 choice
 depends on MALI400
 prompt "Select MALI VER"
-default MALI_VER_R6P2_01REL0
+default MALI_VER_R5P2_REL0
 
 config MALI_VER_R6P2_01REL0
 	bool "Mali400 Version R6P2-01REL0"
