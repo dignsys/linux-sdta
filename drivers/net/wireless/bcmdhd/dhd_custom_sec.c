@@ -401,6 +401,11 @@ int dhd_read_macaddr(struct dhd_info *dhd, struct ether_addr *mac)
 	char *filepath_efs       = MACINFO_EFS;
 	int ret = 0;
 
+	if (filepath_efs == NULL) {
+		DHD_ERROR(("[WIFI_SEC] %s : no efs filepath\n", __func__));
+		return 0;
+	}
+
 	fp = filp_open(filepath_efs, O_RDONLY, 0);
 	if (IS_ERR(fp)) {
 start_readmac:
@@ -961,7 +966,7 @@ startwrite:
 	/* end of /data/.mac.info */
 
 	if (filepath_efs == NULL) {
-		DHD_ERROR(("[WIFI_SEC] %s : no efs filepath", __func__));
+		DHD_ERROR(("[WIFI_SEC] %s : no efs filepath\n", __func__));
 		return 0;
 	}
 
