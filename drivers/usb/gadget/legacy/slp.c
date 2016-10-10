@@ -31,8 +31,6 @@
 #include <linux/usb/composite.h>
 #include <linux/usb/gadget.h>
 
-#include "gadget_chips.h"
-
 #include "../function/f_sdb.c"
 #include "../function/f_acm.c"
 #define USB_ETH_RNDIS y
