@@ -1,15 +1,15 @@
-%define config_name artik710_raptor_defconfig
-%define buildarch aarch64
-%define target_board artik710-raptor
+%define config_name artik530_raptor_defconfig
+%define buildarch arm
+%define target_board artik530-raptor
 %define variant %{target_board}
 %define vendor_name nexell
 
-Name: linux-artik7
-Summary: The Linux Kernel for ARTIK710 Raptor
+Name: linux-artik530
+Summary: The Linux Kernel for ARTIK530 Raptor
 Version: 4.1.15
 Release: 0
 License: GPL-2.0
-ExclusiveArch: aarch64
+ExclusiveArch: %{arm}
 Group: System/Kernel
 Vendor: The Linux Community
 URL: http://www.kernel.org
@@ -78,7 +78,7 @@ make %{config_name}
 make %{?_smp_mflags}
 
 # 2. Build Image
-make Image %{?_smp_mflags}
+make zImage %{?_smp_mflags}
 make dtbs %{?_smp_mflags}
 
 # 3. Build modules
@@ -96,8 +96,8 @@ mkdir -p %{buildroot}/boot/
 mkdir -p %{buildroot}/lib/modules/%{fullVersion}
 
 # 2. Install Image, System.map, ...
-install -m 755 arch/arm64/boot/Image %{buildroot}/boot/
-install -m 644 arch/arm64/boot/dts/nexell/*.dtb %{buildroot}/boot/
+install -m 755 arch/arm/boot/zImage %{buildroot}/boot/
+install -m 644 arch/arm/boot/dts/*.dtb %{buildroot}/boot/
 
 install -m 644 System.map %{buildroot}/boot/System.map-%{fullVersion}
 install -m 644 .config %{buildroot}/boot/config-%{fullVersion}
@@ -110,10 +110,10 @@ make INSTALL_PATH=%{buildroot} INSTALL_MOD_PATH=%{buildroot} INSTALL_HDR_PATH=%{
 
 # 5. Restore source and build irectory
 tar -xf linux-kernel-build-%{fullVersion}.tar -C %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}
-mv %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/arm64 .
+mv %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/arm .
 mv %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/Kconfig .
 rm -rf %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/*
-mv arm64 %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/
+mv arm %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/
 mv Kconfig      %{buildroot}/usr/src/linux-kernel-build-%{fullVersion}/arch/
 
 # 6. Remove files
@@ -122,7 +122,7 @@ find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name ".gitignore" -
 find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name ".*dtb*tmp" -exec rm -f {} \;
 find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "*.*tmp" -exec rm -f {} \;
 find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "vmlinux" -exec rm -f {} \;
-find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "Image" -exec rm -f {} \;
+find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "zImage" -exec rm -f {} \;
 find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "test-*" -exec rm -f {} \;
 find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "*.cmd" -exec rm -f {} \;
 find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -name "*.ko" -exec rm -f {} \;
@@ -169,7 +169,7 @@ rm -rf %{buildroot}
 
 %files -n %{variant}-linux-kernel
 %license COPYING
-/boot/Image
+/boot/zImage
 /boot/*.dtb
 /boot/System.map*
 /boot/config*
