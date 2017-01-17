@@ -6,7 +6,7 @@
 
 Name: linux-artik7
 Summary: The Linux Kernel for ARTIK710 Raptor
-Version: 4.1.15
+Version: 4.4.19
 Release: 0
 License: GPL-2.0
 ExclusiveArch: aarch64
@@ -16,7 +16,7 @@ URL: http://www.kernel.org
 Source0: linux-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{PACKAGE_VERSION}-root
 
-%define fullVersion %{version}-%{variant}
+%define fullVersion %{version}-%{release}-%{variant}
 
 BuildRequires: module-init-tools
 BuildRequires: bc
@@ -27,11 +27,11 @@ The Linux Kernel, the operating system core itself
 %package -n %{variant}-linux-kernel
 Summary: Tizen kernel for %{target_board}
 Group: System/Kernel
-Provides: %{variant}-kernel-profile-%{profile} = %{version}-%{release}
+Provides: %{variant}-kernel-profile-common = %{version}-%{release}
 Provides: %{variant}-kernel-uname-r = %{fullVersion}
 
 %description -n %{variant}-linux-kernel
-This package contains the Linux kernel for Tizen (%{profile} profile, arch %{buildarch}, target board %{target_board})
+This package contains the Linux kernel for Tizen (common profile, arch %{buildarch}, target board %{target_board})
 
 %package -n %{variant}-linux-kernel-modules
 Summary: Kernel modules for %{target_board}
