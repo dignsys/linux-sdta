@@ -71,6 +71,7 @@ Prebuilt linux kernel for out-of-tree modules.
 %setup -q -n linux-%{version}
 
 %build
+%{?asan:/usr/bin/gcc-unforce-options}
 # Make sure EXTRAVERSION says what we want it to say
 sed -i "s/^EXTRAVERSION.*/EXTRAVERSION = -%{release}-%{variant}/" Makefile
 
