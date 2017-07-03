@@ -769,7 +769,7 @@ static int __init logger_init(void)
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_EVENTS, 256*1024);
+	ret = create_log(LOGGER_LOG_APPS, 256*1024);
 	if (unlikely(ret))
 		goto out;
 
