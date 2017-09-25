@@ -76,7 +76,7 @@ static void s5p6818_mali_axibus_lpi_enter(void)
 }
 #endif
 
-static void nexell_platform_resume(struct device *dev)
+static void __maybe_unused nexell_platform_resume(struct device *dev)
 {
 	clk_prepare_enable(clk_mali);
 	reset_control_reset(rst_mali);
@@ -85,7 +85,7 @@ static void nexell_platform_resume(struct device *dev)
 #endif
 }
 
-static void nexell_platform_suspend(struct device *dev)
+static void __maybe_unused nexell_platform_suspend(struct device *dev)
 {
 	if (rst_mali) {
 #ifdef CONFIG_MALI_PLATFORM_S5P6818
