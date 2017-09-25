@@ -275,9 +275,9 @@ static int nx_drm_unload(struct drm_device *drm)
 
 static struct drm_ioctl_desc nx_drm_ioctls[] = {
 	DRM_IOCTL_DEF_DRV(NX_GEM_CREATE, nx_drm_gem_create_ioctl,
-			DRM_UNLOCKED | DRM_AUTH),
+			DRM_UNLOCKED | DRM_AUTH | DRM_RENDER_ALLOW),
 	DRM_IOCTL_DEF_DRV(NX_GEM_SYNC, nx_drm_gem_sync_ioctl,
-			DRM_UNLOCKED | DRM_AUTH),
+			DRM_UNLOCKED | DRM_AUTH | DRM_RENDER_ALLOW),
 	DRM_IOCTL_DEF_DRV(NX_GEM_GET, nx_drm_gem_get_ioctl,
 			DRM_UNLOCKED),
 };
@@ -333,8 +333,7 @@ static struct dma_buf *__drm_gem_prime_export(struct drm_device *drm,
 
 static struct drm_driver nx_drm_driver = {
 	.driver_features = DRIVER_MODESET |
-		DRIVER_GEM | DRIVER_PRIME | DRIVER_ATOMIC,
-
+		DRIVER_GEM | DRIVER_PRIME | DRIVER_ATOMIC | DRIVER_RENDER,
 	.load = nx_drm_load,
 	.unload = nx_drm_unload,
 	.fops = &nx_drm_fops,	/* replace fops */
