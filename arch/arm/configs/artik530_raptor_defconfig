@@ -2029,7 +2029,7 @@ CONFIG_I2C_NX=y
 #
 # Other I2C/SMBus bus drivers
 #
-# CONFIG_I2C_STUB is not set
+CONFIG_I2C_STUB=m
 CONFIG_I2C_SLAVE=y
 # CONFIG_I2C_SLAVE_EEPROM is not set
 # CONFIG_I2C_DEBUG_CORE is not set
