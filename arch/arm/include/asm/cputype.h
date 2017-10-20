@@ -84,6 +84,9 @@
 /* Qualcomm implemented cores */
 #define ARM_CPU_PART_SCORPION		0x510002d0
 
+/* Nexell implemented cores */
+#define ARM_CPU_PART_NEXELL		0x4100c090
+
 extern unsigned int processor_id;
 
 #ifdef CONFIG_CPU_CP15

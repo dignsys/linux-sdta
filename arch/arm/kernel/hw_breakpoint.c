@@ -1082,6 +1082,11 @@ static int __init arch_hw_breakpoint_init(void)
 		return 0;
 	}
 
+	if (read_cpuid_part() == ARM_CPU_PART_NEXELL) {
+		pr_info("NEXELL CPU detected. Hardware breakpoints and watchpoints disabled\n");
+		return 0;
+	}
+
 	has_ossr = core_has_os_save_restore();
 
 	/* Determine how many BRPs/WRPs are available. */
