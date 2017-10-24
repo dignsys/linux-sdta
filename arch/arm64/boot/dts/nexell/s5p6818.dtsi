@@ -48,6 +48,13 @@
 		pinctrl0 = &pinctrl_0;
 	};
 
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
+	};
+
 	psci {
 		compatible = "arm,psci-0.2";
 		method = "smc";
