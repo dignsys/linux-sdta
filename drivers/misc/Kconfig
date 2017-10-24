@@ -556,6 +556,13 @@ config ARTIK_S3T9MF
         help
           This driver allows you can control s3t9mf for artik board.
 
+config ARTIK_TIZEN_REBOOT
+	tristate "ARTIK Tizen reboot handler"
+	depends on ARCH_S5P4418
+	default y
+	help
+	  This handler sets the reboot parameter for artik Tizen.
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"

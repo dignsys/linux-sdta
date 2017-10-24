@@ -61,3 +61,4 @@ obj-$(CONFIG_NX_SCALER)		+= nx-scaler.o
 obj-$(CONFIG_ARTIK_ZB_POWER)	+= artik_zb_power.o
 obj-$(CONFIG_ARTIK_S3T9MF)	+= s3t9mf.o
 obj-$(CONFIG_ARTIK_TRUSTZONE_DRIVER)    += artiktee/
+obj-$(CONFIG_ARTIK_TIZEN_REBOOT)	+= tizen-artik-reboot.o
