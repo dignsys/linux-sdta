@@ -67,6 +67,14 @@ Requires: %{variant}-linux-kernel = %{version}-%{release}
 %description -n %{variant}-linux-kernel-devel
 Prebuilt linux kernel for out-of-tree modules.
 
+%package -n %{variant}-linux-kernel-debuginfo
+License: GPL-2.0
+Summary: Linux support debug symbol
+Group: System/Kernel
+
+%description -n %{variant}-linux-kernel-debuginfo
+This package provides the %{target_board} linux kernel's debugging files.
+
 %prep
 %setup -q -n linux-%{version}
 
@@ -103,6 +111,7 @@ mkdir -p %{buildroot}/lib/modules/%{fullVersion}
 install -m 755 arch/arm64/boot/Image %{buildroot}/boot/
 install -m 644 arch/arm64/boot/dts/nexell/*.dtb %{buildroot}/boot/
 
+install -m 644 vmlinux %{buildroot}/boot/vmlinux-%{fullVersion}
 install -m 644 System.map %{buildroot}/boot/System.map-%{fullVersion}
 install -m 644 .config %{buildroot}/boot/config-%{fullVersion}
 
@@ -138,7 +147,6 @@ find %{buildroot}/usr/src/linux-kernel-build-%{fullVersion} -size 0c -exec rm -f
 find %{buildroot}/usr/include -name "\.install"  -exec rm -f {} \;
 find %{buildroot}/usr -name "..install.cmd" -exec rm -f {} \;
 
-rm -rf %{buildroot}/boot/vmlinux*
 rm -rf %{buildroot}/System.map*
 rm -rf %{buildroot}/vmlinux*
 rm -rf %{buildroot}/lib/firmware
@@ -175,9 +183,12 @@ rm -rf %{buildroot}
 %license COPYING
 /boot/Image
 /boot/*.dtb
-/boot/System.map*
-/boot/config*
 
 %files -n %{variant}-linux-kernel-headers
 %defattr (-, root, root)
 /usr/include
+
+%files -n %{variant}-linux-kernel-debuginfo
+/boot/System.map*
+/boot/config*
+/boot/vmlinux*
