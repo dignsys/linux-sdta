@@ -392,6 +392,16 @@ static int ds1307_set_time(struct device *dev, struct rtc_time *t)
 	int		tmp;
 	u8		*buf = ds1307->regs;
 
+	/*
+	 * WORKAROUND:
+	 * If try to set 2038/01/19, prevent to set the value.
+	 */
+	if (t->tm_year >= 138 && t->tm_mon > 0 && t->tm_mday > 18) {
+		dev_err(dev, "Can't set year = %d, mon = %d, mday = %d\n",
+			t->tm_year + 1900, t->tm_mon, t->tm_mday);
+		return -EINVAL;
+	}
+
 	dev_dbg(dev, "%s secs=%d, mins=%d, "
 		"hours=%d, mday=%d, mon=%d, year=%d, wday=%d\n",
 		"write", t->tm_sec, t->tm_min,
