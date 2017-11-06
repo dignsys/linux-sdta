@@ -876,7 +876,6 @@ struct dwc2_hsotg {
 #if IS_ENABLED(CONFIG_EXTCON)
 	struct extcon_dev *edev;
 	struct work_struct extcon_work;
-	unsigned int extcon_state;
 #endif /* CONFIG_EXTCON */
 #endif /* CONFIG_USB_DWC2_PERIPHERAL || CONFIG_USB_DWC2_DUAL_ROLE */
 };

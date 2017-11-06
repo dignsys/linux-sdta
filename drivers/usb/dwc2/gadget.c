@@ -41,18 +41,26 @@ static const unsigned int supported_cable[] = {
 	EXTCON_NONE,
 };
 
-static void dwc2_gadget_extcon_notify(struct dwc2_hsotg *hsotg, bool on)
+static inline void dwc2_gadget_extcon_notify(struct dwc2_hsotg *hsotg)
 {
-	hsotg->extcon_state = on;
 	queue_work(system_power_efficient_wq, &hsotg->extcon_work);
+}
+
+static inline void dwc2_gadget_cancel_extcon_work(struct dwc2_hsotg *hsotg)
+{
+	cancel_work_sync(&hsotg->extcon_work);
 }
 
 static void dwc2_gadget_extcon_work(struct work_struct *work)
 {
 	struct dwc2_hsotg *hsotg = container_of(work, struct dwc2_hsotg,
 						extcon_work);
+	u32 usb_status = dwc2_readl(hsotg->regs + GOTGCTL);
 
-	extcon_set_cable_state_(hsotg->edev, EXTCON_USB, hsotg->extcon_state);
+	if (usb_status & (GOTGCTL_ASESVLD | GOTGCTL_BSESVLD))
+		extcon_set_cable_state_(hsotg->edev, EXTCON_USB, true);
+	else
+		extcon_set_cable_state_(hsotg->edev, EXTCON_USB, false);
 }
 
 static int dwc2_gadget_extcon_init(struct dwc2_hsotg *hsotg)
@@ -79,7 +87,11 @@ static int dwc2_gadget_extcon_init(struct dwc2_hsotg *hsotg)
 	return 0;
 }
 #else
-static inline void dwc2_gadget_extcon_notify(struct dwc2_hsotg *hsotg, bool on)
+static inline void dwc2_gadget_extcon_notify(struct dwc2_hsotg *hsotg)
+{
+}
+
+static inline void dwc2_gadget_cancel_extcon_work(struct dwc2_hsotg *hsotg)
 {
 }
 
@@ -2573,7 +2585,7 @@ irq_retry:
 			u32 flags = GOTGCTL_ASESVLD | GOTGCTL_BSESVLD;
 
 			if (!(usb_status & flags))
-				dwc2_gadget_extcon_notify(hsotg, false);
+				dwc2_gadget_extcon_notify(hsotg);
 		}
 	}
 
@@ -2583,7 +2595,7 @@ irq_retry:
 		dwc2_hsotg_irq_enumdone(hsotg);
 
 		if (hsotg->g_extcon_notify)
-			dwc2_gadget_extcon_notify(hsotg, true);
+			dwc2_gadget_extcon_notify(hsotg);
 	}
 
 	if (gintsts & (GINTSTS_OEPINT | GINTSTS_IEPINT)) {
@@ -3329,11 +3341,22 @@ static int dwc2_hsotg_pullup(struct usb_gadget *gadget, int is_on)
 		dwc2_hsotg_core_init_disconnected(hsotg, false);
 		dwc2_hsotg_core_connect(hsotg);
 	} else {
+		/*
+		 * If gadget disconnection makes also PHY pullup
+		 * disconnection, usb controller cannot generate
+		 * interrupt for usb connection and thus extcon
+		 * notification won't be working. In order to prevent
+		 * this situation, we have to keep PHY pullup alive
+		 * when extcon notification is activated.
+		 */
+		if (hsotg->g_extcon_notify)
+			goto skip_change;
 		dwc2_hsotg_core_disconnect(hsotg);
 		dwc2_hsotg_disconnect(hsotg);
 		hsotg->enabled = 0;
 	}
 
+skip_change:
 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
 	spin_unlock_irqrestore(&hsotg->lock, flags);
 
@@ -3757,6 +3780,9 @@ int dwc2_gadget_init(struct dwc2_hsotg *hsotg, int irq)
  */
 int dwc2_hsotg_remove(struct dwc2_hsotg *hsotg)
 {
+	if (hsotg->g_extcon_notify)
+		dwc2_gadget_cancel_extcon_work(hsotg);
+
 	usb_del_gadget_udc(&hsotg->gadget);
 	dwc2_hsotg_ep_free_request(&hsotg->eps_out[0]->ep, hsotg->ctrl_req);
 
@@ -3779,6 +3805,9 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)
 			return -EBUSY;
 		}
 	}
+
+	if (hsotg->g_extcon_notify)
+		dwc2_gadget_cancel_extcon_work(hsotg);
 
 	if (hsotg->driver) {
 		int ep;
