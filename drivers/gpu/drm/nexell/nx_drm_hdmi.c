@@ -29,6 +29,7 @@
 #include <video/of_display_timing.h>
 #include <dt-bindings/gpio/gpio.h>
 #include <drm/nexell_drm.h>
+#include <linux/extcon.h>
 
 #include "nx_drm_drv.h"
 #include "nx_drm_fb.h"
@@ -51,6 +52,12 @@ struct hdmi_context {
 	/* properties */
 	int crtc_pipe;
 	unsigned int possible_crtcs_mask;
+	struct extcon_dev *edev;
+};
+
+static const unsigned int supported_cable[] = {
+	EXTCON_DISP_HDMI,
+	EXTCON_NONE,
 };
 
 #define ctx_to_display(c)	\
@@ -367,6 +374,8 @@ static void panel_hdmi_hpd_work(struct work_struct *work)
 
 	DRM_INFO("HDMI %s\n", plug ? "plug" : "unplug");
 
+	extcon_set_cable_state_(ctx->edev, EXTCON_DISP_HDMI, plug);
+
 	ctx->plug = plug;
 	connector = &ctx->connector->connector;
 	drm_helper_hpd_irq_event(connector->dev);
@@ -557,6 +566,40 @@ static int panel_hdmi_get_display(struct platform_device *pdev,
 	return 0;
 }
 
+static int panel_hdmi_extcon_init(struct platform_device *pdev,
+					struct hdmi_context *ctx)
+{
+	struct device *dev = &pdev->dev;
+	struct nx_drm_display *display = ctx_to_display(ctx);
+	struct extcon_dev *edev;
+	int err;
+
+	edev = devm_extcon_dev_allocate(dev, supported_cable);
+	if (IS_ERR(edev)) {
+		DRM_ERROR("failed to allocate extcon device\n");
+		return -ENODEV;
+	}
+
+	err = devm_extcon_dev_register(dev, edev);
+	if (err) {
+		DRM_ERROR("failed to register extcon device\n");
+		return err;
+	}
+
+	if (!display->ops->hdmi->is_connected) {
+		DRM_ERROR("HDMI not implement connected API\n");
+		return -ENOENT;
+	}
+
+	ctx->edev = edev;
+
+	/* notify the plugged state when hdmi is already connected */
+	if (display->ops->hdmi->is_connected(display))
+		extcon_set_cable_state_(edev, EXTCON_DISP_HDMI, true);
+
+	return 0;
+}
+
 static int panel_hdmi_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
@@ -592,6 +635,10 @@ static int panel_hdmi_probe(struct platform_device *pdev)
 	err = panel_hdmi_parse_dt(pdev, ctx);
 	if (err < 0)
 		goto err_probe;
+
+	err = panel_hdmi_extcon_init(pdev, ctx);
+	if (0 > err)
+		return err;
 
 	dev_set_drvdata(dev, ctx);
 

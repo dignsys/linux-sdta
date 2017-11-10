@@ -58,6 +58,7 @@ config DRM_NX_MIPI_DSI
 config DRM_NX_HDMI
 	bool "HDMI support"
 	depends on DRM_NX
+	select EXTCON
 	help
 	 This selects support for HDMI display out.
 	 If you want to enable HDMI display,
