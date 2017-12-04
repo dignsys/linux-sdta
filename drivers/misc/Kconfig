@@ -558,7 +558,7 @@ config ARTIK_S3T9MF
 
 config ARTIK_TIZEN_REBOOT
 	tristate "ARTIK Tizen reboot handler"
-	depends on ARCH_S5P4418
+	depends on ARCH_S5P4418 || ARCH_S5P6818
 	default y
 	help
 	  This handler sets the reboot parameter for artik Tizen.
