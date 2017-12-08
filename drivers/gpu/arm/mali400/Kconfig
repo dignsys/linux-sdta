@@ -60,15 +60,6 @@ if MALI_VER_R6P2_01REL0
 source "drivers/gpu/arm/mali400/r6p2_01rel0/Kconfig"
 endif
 
-config MALI_DMA_BUF_FENCE
-	bool "Make DMA BUF Fence"
-	depends on MALI400
-	default n
-	---help---
-	  Choose this option if you want to use fences and reservations for
-	  synchronization of shared dma-buf access between different drivers.
-
-	  If unsure, say N.
 config MALI_VER_R5P2_REL0
 	bool "Mali400 Version R5P2-REL0"
 	help
