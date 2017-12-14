@@ -339,6 +339,9 @@ int nx_drm_vblank_init(struct drm_device *drm)
 				goto err_irq;
 		}
 	}
+
+	drm->irq_enabled = true;
+
 	return 0;
 
 err_irq:
