@@ -19,6 +19,7 @@
 #include <linux/version.h>
 
 #include <linux/videodev2.h>
+#include <linux/videodev2_nxp_media.h>
 
 #include <media/v4l2-common.h>
 #include <media/v4l2-ioctl.h>
@@ -1268,6 +1269,24 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
 		case V4L2_PIX_FMT_JPGL:		descr = "JPEG Lite"; break;
 		case V4L2_PIX_FMT_SE401:	descr = "GSPCA SE401"; break;
 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
+
+		/* for nexell soc */
+		case V4L2_PIX_FMT_NV24M:	descr = "Nexell Y/CbCr 4:4:4"; break;
+		case V4L2_PIX_FMT_NV42M:	descr = "Nexell Y/CrCb 4:4:4:"; break;
+		case V4L2_PIX_FMT_YUV422M:	descr = "Nexell YUV422 planar"; break;
+		case V4L2_PIX_FMT_YUV444M:	descr = "Nexell YUV444 planar"; break;
+		case V4L2_PIX_FMT_DIV3:		descr = "Nexell compressed div3"; break;
+		case V4L2_PIX_FMT_DIV4:		descr = "Nexell compressed div4"; break;
+		case V4L2_PIX_FMT_DIV5:		descr = "Nexell compressed div5"; break;
+		case V4L2_PIX_FMT_DIV6:		descr = "Nexell compressed div6"; break;
+		case V4L2_PIX_FMT_DIVX:		descr = "Nexell compressed divx"; break;
+		case V4L2_PIX_FMT_RV8:		descr = "Nexell compressed rv8"; break;
+		case V4L2_PIX_FMT_RV9:		descr = "Nexell compressed rv9"; break;
+		case V4L2_PIX_FMT_WMV9:		descr = "Nexell compressed wmv9"; break;
+		case V4L2_PIX_FMT_WVC1:		descr = "Nexell compressed wvc1"; break;
+		case V4L2_PIX_FMT_FLV1:		descr = "Nexell compressed flv1"; break;
+		case V4L2_PIX_FMT_THEORA:	descr = "Nexell compressed theora"; break;
+
 		default:
 			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
 			if (fmt->description[0])
