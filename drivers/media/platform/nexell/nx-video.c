@@ -783,9 +783,10 @@ static int nx_video_set_format(struct file *file, void *fh,
 	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
 		struct v4l2_pix_format_mplane *pix = &f->fmt.pix_mp;
 
+		set_plane_size_mmap(frame, &pix->plane_fmt[0].sizeimage);
 		for (i = 0; i < format->num_planes; ++i) {
-			frame->stride[i] = pix->plane_fmt[i].bytesperline;
-			frame->size[i] = pix->plane_fmt[i].sizeimage;
+			pix->plane_fmt[i].bytesperline = frame->stride[i];
+			pix->plane_fmt[i].sizeimage = frame->size[i];
 		}
 	}
 
