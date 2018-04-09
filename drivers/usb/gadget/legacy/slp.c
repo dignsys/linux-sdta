@@ -32,6 +32,7 @@
 #include <linux/usb/gadget.h>
 
 #include "../function/f_sdb.c"
+#include "../function/f_mtp.c"
 #include "../function/f_acm.c"
 #define USB_ETH_RNDIS y
 #define USB_FRNDIS_INCLUDED y
@@ -423,6 +424,41 @@ static struct slp_multi_usb_function acm_function = {
 	.attributes	= acm_function_attributes,
 };
 
+static int
+mtp_function_init(struct slp_multi_usb_function *f,
+				struct usb_composite_dev *cdev)
+{
+	return mtp_setup();
+}
+
+static void mtp_function_cleanup(struct slp_multi_usb_function *f)
+{
+	mtp_cleanup();
+}
+
+static int
+mtp_function_bind_config(struct slp_multi_usb_function *f,
+				struct usb_configuration *c)
+{
+	return mtp_bind_config(c, false);
+}
+
+static int
+mtp_function_ctrlrequest(struct slp_multi_usb_function *f,
+				struct usb_composite_dev *cdev,
+				const struct usb_ctrlrequest *c)
+{
+	return mtp_ctrlrequest(cdev, c);
+}
+
+static struct slp_multi_usb_function mtp_function = {
+	.name = "mtp",
+	.init = mtp_function_init,
+	.cleanup = mtp_function_cleanup,
+	.bind_config = mtp_function_bind_config,
+	.ctrlrequest = mtp_function_ctrlrequest,
+};
+
 struct rndis_function_config {
 	u8 ethaddr[ETH_ALEN];
 	u32 vendorID;
@@ -689,6 +725,7 @@ static struct slp_multi_usb_function rndis_function = {
 
 static struct slp_multi_usb_function *supported_functions[] = {
 	&sdb_function,
+	&mtp_function,
 	&acm_function,
 	&rndis_function,
 	NULL
