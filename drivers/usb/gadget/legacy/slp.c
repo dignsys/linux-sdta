@@ -1201,15 +1201,27 @@ static int slp_multi_bind(struct usb_composite_dev *cdev)
 	strncpy(product_string, "TIZEN", sizeof(product_string) - 1);
 
 	serial = dmi_get_system_info(DMI_PRODUCT_SERIAL);
-	if (serial)
+	if (serial) {
 		snprintf(serial_string, 18, "%s", serial);
-	else
+	} else {
 #ifdef CONFIG_ARM
 		snprintf(serial_string, 18, "%s",
 			 system_serial);
 #else
-		snprintf(serial_string, 18, "%s", "01234TEST");
+		struct device_node *root;
+		const char *serial_number = NULL;
+
+		root = of_find_node_by_path("/");
+		if (root)
+			of_property_read_string(root, "serial-number",
+						&serial_number);
+
+		if (serial_number)
+			snprintf(serial_string, 18, "%s", serial_number);
+		else
+			snprintf(serial_string, 18, "%s", "01234TEST");
 #endif
+	}
 
 	id = usb_string_id(cdev);
 	if (id < 0)
