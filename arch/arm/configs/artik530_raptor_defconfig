@@ -2715,6 +2715,7 @@ CONFIG_VIDEO_S5KRD4=y
 # Camera sensor devices
 #
 # CONFIG_VIDEO_OV2659 is not set
+CONFIG_VIDEO_OV5640=y
 # CONFIG_VIDEO_OV7640 is not set
 # CONFIG_VIDEO_OV7670 is not set
 # CONFIG_VIDEO_OV9650 is not set
