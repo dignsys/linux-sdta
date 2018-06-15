@@ -158,6 +158,7 @@
 
 		dwc2otg@c0040000 {
 			gpios = <&gpio_a 15 0>;
+			g-extcon-notify;
 			status = "okay";
 		};
 
