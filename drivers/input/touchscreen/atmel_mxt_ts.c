@@ -218,6 +218,7 @@ struct mxt_data {
 	const struct mxt_platform_data *pdata;
 	struct mxt_object *object_table;
 	struct mxt_info info;
+	u8 enabled;
 	unsigned int irq;
 	unsigned int max_x;
 	unsigned int max_y;
@@ -729,29 +730,33 @@ static void mxt_proc_t9_message(struct mxt_data *data, u8 *message)
 		(status & MXT_T9_UNGRIP) ? 'U' : '.',
 		x, y, area, amplitude);
 
-	input_mt_slot(input_dev, id);
+	if (data->enabled) {
+		input_mt_slot(input_dev, id);
 
-	if (status & MXT_T9_DETECT) {
-		/*
-		 * Multiple bits may be set if the host is slow to read
-		 * the status messages, indicating all the events that
-		 * have happened.
-		 */
-		if (status & MXT_T9_RELEASE) {
+		if (status & MXT_T9_DETECT) {
+			/*
+			 * Multiple bits may be set if the host is slow to read
+			 * the status messages, indicating all the events that
+			 * have happened.
+			 */
+			if (status & MXT_T9_RELEASE) {
+				input_mt_report_slot_state(input_dev,
+							   MT_TOOL_FINGER, 0);
+				mxt_input_sync(data);
+			}
+
+			/* Touch active */
+			input_mt_report_slot_state(input_dev,
+						   MT_TOOL_FINGER, 1);
+			input_report_abs(input_dev, ABS_MT_POSITION_X, x);
+			input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
+			input_report_abs(input_dev, ABS_MT_PRESSURE, amplitude);
+			input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, area);
+		} else {
+			/* Touch no longer active, close out slot */
 			input_mt_report_slot_state(input_dev,
 						   MT_TOOL_FINGER, 0);
-			mxt_input_sync(data);
 		}
-
-		/* Touch active */
-		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, 1);
-		input_report_abs(input_dev, ABS_MT_POSITION_X, x);
-		input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
-		input_report_abs(input_dev, ABS_MT_PRESSURE, amplitude);
-		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, area);
-	} else {
-		/* Touch no longer active, close out slot */
-		input_mt_report_slot_state(input_dev, MT_TOOL_FINGER, 0);
 	}
 
 	data->update_input = true;
@@ -847,24 +852,27 @@ static void mxt_proc_t100_message(struct mxt_data *data, u8 *message)
 	if (!pressure && type != MXT_T100_TYPE_HOVERING_FINGER)
 		pressure = MXT_PRESSURE_DEFAULT;
 
-	input_mt_slot(input_dev, id);
+	if (data->enabled) {
+		input_mt_slot(input_dev, id);
 
-	if (status & MXT_T100_DETECT) {
-		dev_dbg(dev, "[%u] type:%u x:%u y:%u a:%02X p:%02X v:%02X\n",
-			id, type, x, y, major, pressure, orientation);
+		if (status & MXT_T100_DETECT) {
+			dev_dbg(dev, "[%u] type:%u x:%u y:%u a:%02X p:%02X v:%02X\n",
+				id, type, x, y, major, pressure, orientation);
 
-		input_mt_report_slot_state(input_dev, tool, 1);
-		input_report_abs(input_dev, ABS_MT_POSITION_X, x);
-		input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
-		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, major);
-		input_report_abs(input_dev, ABS_MT_PRESSURE, pressure);
-		input_report_abs(input_dev, ABS_MT_DISTANCE, distance);
-		input_report_abs(input_dev, ABS_MT_ORIENTATION, orientation);
-	} else {
-		dev_dbg(dev, "[%u] release\n", id);
+			input_mt_report_slot_state(input_dev, tool, 1);
+			input_report_abs(input_dev, ABS_MT_POSITION_X, x);
+			input_report_abs(input_dev, ABS_MT_POSITION_Y, y);
+			input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, major);
+			input_report_abs(input_dev, ABS_MT_PRESSURE, pressure);
+			input_report_abs(input_dev, ABS_MT_DISTANCE, distance);
+			input_report_abs(input_dev, ABS_MT_ORIENTATION,
+					 orientation);
+		} else {
+			dev_dbg(dev, "[%u] release\n", id);
 
-		/* close out slot */
-		input_mt_report_slot_state(input_dev, 0, 0);
+			/* close out slot */
+			input_mt_report_slot_state(input_dev, 0, 0);
+		}
 	}
 
 	data->update_input = true;
@@ -2361,10 +2369,37 @@ static ssize_t mxt_update_fw_store(struct device *dev,
 	return count;
 }
 
+static ssize_t show_enabled(struct device *dev, struct device_attribute *attr,
+                                        char *buf)
+{
+	struct mxt_data *data = dev_get_drvdata(dev);
+
+	return sprintf(buf, "%d\n", data->enabled);
+}
+
+static ssize_t store_enabled(struct device *dev, struct device_attribute *attr,
+                                        const char *buf, size_t size)
+{
+	struct mxt_data *data = dev_get_drvdata(dev);
+	int enabled;
+	int ret;
+
+	ret = sscanf(buf, "%d", &enabled);
+
+	if (ret == 0)
+		return -EINVAL;
+
+	data->enabled = !!enabled;
+
+	return size;
+}
+
 static DEVICE_ATTR(fw_version, S_IRUGO, mxt_fw_version_show, NULL);
 static DEVICE_ATTR(hw_version, S_IRUGO, mxt_hw_version_show, NULL);
 static DEVICE_ATTR(object, S_IRUGO, mxt_object_show, NULL);
 static DEVICE_ATTR(update_fw, S_IWUSR, NULL, mxt_update_fw_store);
+static DEVICE_ATTR(enabled, S_IRUSR | S_IWUSR | S_IRGRP,
+					show_enabled, store_enabled);
 
 static struct attribute *mxt_attrs[] = {
 	&dev_attr_fw_version.attr,
@@ -2374,8 +2409,17 @@ static struct attribute *mxt_attrs[] = {
 	NULL
 };
 
+static struct attribute *input_attrs[] = {
+	&dev_attr_enabled.attr,
+	NULL
+};
+
 static const struct attribute_group mxt_attr_group = {
 	.attrs = mxt_attrs,
+};
+
+static const struct attribute_group input_attr_group = {
+	.attrs = input_attrs,
 };
 
 static void mxt_start(struct mxt_data *data)
@@ -2684,6 +2728,15 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
 			error);
 		goto err_free_object;
 	}
+
+	error = sysfs_create_group(&data->input_dev->dev.kobj,
+						   &input_attr_group);
+	if (error) {
+		dev_err(&client->dev, "Failure %d creating sysfs group\n",
+			error);
+		goto err_free_object;
+	}
+	data->enabled = 1;
 
 	return 0;
 
