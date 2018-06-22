@@ -64,6 +64,7 @@
 		i2c5 = &i2c_gpio5;
 		i2c6 = &i2c_gpio6;
 		i2c7 = &i2c_gpio7;
+		i2c10 = &i2c_gpio10;
 	};
 
 	nx-v4l2 {
@@ -411,6 +412,17 @@
 		#size-cells = <0>;
 	};
 
+	i2c_gpio10: i2c@10 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio_b 18 0	/* sda */
+			&gpio_b 11 0	/* scl */
+			>;
+		i2c-gpio,delay-us = <3>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+	};
+
 	sound0: sound@0 {
 		compatible = "simple-audio-card";
 		simple-audio-card,name = "Artik530 raptor Audio";
@@ -563,6 +575,23 @@
 &serial1 {
 	status = "okay";
 	pinctrl-0 = <&serial1_pin>, <&serial1_flow_cts>, <&serial1_flow_rts>;
+};
+
+&serial4 {
+	status = "okay";
+};
+
+&spi_2 {
+	status = "okay";
+	cs-gpios = <&gpio_c 10 0>;
+	spidev@0 {
+		compatible = "linux,spidev";
+		reg = <0>;
+		spi-max-frequency = <10000000>;
+		controller-data {
+			samsung,spi-feedback-delay = <0>;
+		};
+	};
 };
 
 &dp_drm {
