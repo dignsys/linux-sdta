@@ -617,3 +617,7 @@
 	enable-gpios = <&gpio_a 21 0>;
 	status = "ok";
 };
+
+&i2c_1 {
+	status = "okay";
+};
