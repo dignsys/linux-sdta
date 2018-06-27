@@ -414,8 +414,8 @@
 
 	i2c_gpio10: i2c@10 {
 		compatible = "i2c-gpio";
-		gpios = <&gpio_b 18 0	/* sda */
-			&gpio_b 11 0	/* scl */
+		gpios = <&gpio_a 19 0	/* sda */
+			&gpio_a 20 0	/* scl */
 			>;
 		i2c-gpio,delay-us = <3>;
 		#address-cells = <1>;
@@ -476,6 +476,20 @@
 			gpios = <&alive_0 0 1>;
 			linux,code = <KEY_POWER>;
 			gpio-key,wakeup;
+		};
+
+		wakeup {
+			label = "Wakeup";
+			gpios = <&gpio_b 18 1>;
+			linux,code = <KEY_WAKEUP>;
+			gpio-key,wakeup;
+		};
+
+		keyback {
+			label = "Back";
+			gpios = <&gpio_b 22 1>;
+			linux,code = <KEY_BACK>;
+			gpio-key;
 		};
 	};
 
