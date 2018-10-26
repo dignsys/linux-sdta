@@ -736,6 +736,14 @@ static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
 			return -ESHUTDOWN;
 		}
 		data_len = iov_iter_count(&io_data->data);
+
+		/*
+		 * WORKAROUND:
+		 * To prevent memory allocation failure of big size request,
+		 * limits data buffer size to a single page.
+		 */
+		data_len = (data_len > PAGE_SIZE) ? PAGE_SIZE : data_len;
+
 		/*
 		 * Controller may require buffer size to be aligned to
 		 * maxpacketsize of an out endpoint.
