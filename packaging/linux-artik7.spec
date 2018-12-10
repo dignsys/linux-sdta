@@ -6,7 +6,7 @@
 
 Name: linux-artik7
 Summary: The Linux Kernel for ARTIK710 Raptor
-Version: 4.4.71
+Version: 4.4.113
 Release: 0
 License: GPL-2.0
 ExclusiveArch: aarch64
