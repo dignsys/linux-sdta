@@ -1759,7 +1759,7 @@ static void dw_mci_set_drto(struct dw_mci *host)
 {
 	unsigned int drto_clks;
 	unsigned int drto_ms;
-	unsigned int irqflags;
+	unsigned long irqflags;
 
 	drto_clks = mci_readl(host, TMOUT) >> 8;
 	drto_ms = DIV_ROUND_UP(drto_clks, host->bus_hz / 1000);
