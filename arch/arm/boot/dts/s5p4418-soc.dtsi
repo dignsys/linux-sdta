@@ -455,7 +455,7 @@ clocks {
 		clock-frequency = <12000000>;
 	};
 
-	otg:otg@6c00b000 {
+	otg:otg@c006b000 {
 		#clock-cells = <0>;
 		clock-output-names = "otg";
 		cell-id = <CLK_ID_USBOTG>;
