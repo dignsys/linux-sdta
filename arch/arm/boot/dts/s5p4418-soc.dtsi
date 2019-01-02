@@ -463,6 +463,7 @@ clocks {
 		clk-step   = <2>;
 		clk-input  = <CLK_INPUT_OTG>;
 		clk-input1 = <CLK_INPUT_OTG_IN1>;
+		clock-frequency = <12000000>;
 	};
 };
 
