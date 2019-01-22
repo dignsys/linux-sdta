@@ -1181,35 +1181,35 @@ static const DECLARE_TLV_DB_SCALE(in_bst_tlv, -1200, 75, 0);
 static const DECLARE_TLV_DB_SCALE(dac_mixer_vol_tlv, -6000, 6000, 0);
 
 /* Interface data select */
-static const char * const rt5659_data_select[] = {
+static const char * rt5659_data_select[] = {
 	"L/R", "R/L", "L/L", "R/R"
 };
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if1_01_adc_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if1_01_adc_enum,
 	RT5659_TDM_CTRL_2, 14, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if1_23_adc_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if1_23_adc_enum,
 	RT5659_TDM_CTRL_2, 12, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if1_45_adc_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if1_45_adc_enum,
 	RT5659_TDM_CTRL_2, 10, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if1_67_adc_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if1_67_adc_enum,
 	RT5659_TDM_CTRL_2, 8, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if2_dac_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if2_dac_enum,
 	RT5659_DIG_INF23_DATA, RT5659_IF2_DAC_SEL_SFT, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if2_adc_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if2_adc_enum,
 	RT5659_DIG_INF23_DATA, RT5659_IF2_ADC_SEL_SFT, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if3_dac_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if3_dac_enum,
 	RT5659_DIG_INF23_DATA, RT5659_IF3_DAC_SEL_SFT, rt5659_data_select);
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_if3_adc_enum,
+static SOC_ENUM_SINGLE_DECL(rt5659_if3_adc_enum,
 	RT5659_DIG_INF23_DATA, RT5659_IF3_ADC_SEL_SFT, rt5659_data_select);
 
-static const char * const rt5659_asrc_clk_src[] = {
+static const char * rt5659_asrc_clk_src[] = {
 	"clk_sysy_div_out", "clk_i2s1_track", "clk_i2s2_track",
 	"clk_i2s3_track", "clk_sys2", "clk_sys3"
 };
@@ -1218,31 +1218,31 @@ static unsigned int rt5659_asrc_clk_map_values[] = {
 	0, 1, 2, 3, 5, 6,
 };
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_da_sto_asrc_enum, RT5659_ASRC_2, RT5659_DA_STO_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_da_monol_asrc_enum, RT5659_ASRC_2, RT5659_DA_MONO_L_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_da_monor_asrc_enum, RT5659_ASRC_2, RT5659_DA_MONO_R_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_ad_sto1_asrc_enum, RT5659_ASRC_2, RT5659_AD_STO1_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_ad_sto2_asrc_enum, RT5659_ASRC_3, RT5659_AD_STO2_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_ad_monol_asrc_enum, RT5659_ASRC_3, RT5659_AD_MONO_L_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
-static const SOC_VALUE_ENUM_SINGLE_DECL(
+static SOC_VALUE_ENUM_SINGLE_DECL(
 	rt5659_ad_monor_asrc_enum, RT5659_ASRC_3, RT5659_AD_MONO_R_T_SFT, 0x7,
 	rt5659_asrc_clk_src, rt5659_asrc_clk_map_values);
 
@@ -1638,11 +1638,11 @@ static int rt5659_imp_detect(struct snd_soc_codec *codec)
 	return 0;
 }
 
-static const char * const rt5659_push_btn_mode[] = {
+static const char * rt5659_push_btn_mode[] = {
 	"Disable", "Read"
 };
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_push_btn_enum, 0, 0,
+static SOC_ENUM_SINGLE_DECL(rt5659_push_btn_enum, 0, 0,
 	rt5659_push_btn_mode);
 
 static int rt5659_push_btn_get(struct snd_kcontrol *kcontrol,
@@ -1664,11 +1664,11 @@ static int rt5659_push_btn_put(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
-static const char * const rt5659_jack_type_mode[] = {
+static const char * rt5659_jack_type_mode[] = {
 	"Disable", "Read"
 };
 
-static const SOC_ENUM_SINGLE_DECL(rt5659_jack_type_enum, 0, 0,
+static SOC_ENUM_SINGLE_DECL(rt5659_jack_type_enum, 0, 0,
 	rt5659_jack_type_mode);
 
 static int rt5659_jack_type_get(struct snd_kcontrol *kcontrol,
@@ -2395,18 +2395,18 @@ static const struct snd_kcontrol_new rt5659_lout_r_mix[] = {
 
 /*DAC L2, DAC R2*/
 /*MX-1B [6:4], MX-1B [2:0]*/
-static const char * const rt5659_dac2_src[] = {
+static const char * rt5659_dac2_src[] = {
 	"IF1 DAC2", "IF2 DAC", "IF3 DAC", "Mono ADC MIX"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_dac_l2_enum, RT5659_DAC_CTRL,
 	RT5659_DAC_L2_SEL_SFT, rt5659_dac2_src);
 
 static const struct snd_kcontrol_new rt5659_dac_l2_mux =
 	SOC_DAPM_ENUM("DAC L2 Source", rt5659_dac_l2_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_dac_r2_enum, RT5659_DAC_CTRL,
 	RT5659_DAC_R2_SEL_SFT, rt5659_dac2_src);
 
@@ -2416,11 +2416,11 @@ static const struct snd_kcontrol_new rt5659_dac_r2_mux =
 
 /* STO1 ADC1 Source */
 /* MX-26 [13] */
-static const char * const rt5659_sto1_adc1_src[] = {
+static const char * rt5659_sto1_adc1_src[] = {
 	"DAC MIX", "ADC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_sto1_adc1_enum, RT5659_STO1_ADC_MIXER,
 	RT5659_STO1_ADC1_SRC_SFT, rt5659_sto1_adc1_src);
 
@@ -2429,11 +2429,11 @@ static const struct snd_kcontrol_new rt5659_sto1_adc1_mux =
 
 /* STO1 ADC Source */
 /* MX-26 [12] */
-static const char * const rt5659_sto1_adc_src[] = {
+static const char * rt5659_sto1_adc_src[] = {
 	"ADC1", "ADC2"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_sto1_adc_enum, RT5659_STO1_ADC_MIXER,
 	RT5659_STO1_ADC_SRC_SFT, rt5659_sto1_adc_src);
 
@@ -2442,11 +2442,11 @@ static const struct snd_kcontrol_new rt5659_sto1_adc_mux =
 
 /* STO1 ADC2 Source */
 /* MX-26 [11] */
-static const char * const rt5659_sto1_adc2_src[] = {
+static const char * rt5659_sto1_adc2_src[] = {
 	"DAC MIX", "DMIC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_sto1_adc2_enum, RT5659_STO1_ADC_MIXER,
 	RT5659_STO1_ADC2_SRC_SFT, rt5659_sto1_adc2_src);
 
@@ -2455,11 +2455,11 @@ static const struct snd_kcontrol_new rt5659_sto1_adc2_mux =
 
 /* STO1 DMIC Source */
 /* MX-26 [8] */
-static const char * const rt5659_sto1_dmic_src[] = {
+static const char * rt5659_sto1_dmic_src[] = {
 	"DMIC1", "DMIC2"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_sto1_dmic_enum, RT5659_STO1_ADC_MIXER,
 	RT5659_STO1_DMIC_SRC_SFT, rt5659_sto1_dmic_src);
 
@@ -2469,11 +2469,11 @@ static const struct snd_kcontrol_new rt5659_sto1_dmic_mux =
 
 /* MONO ADC L2 Source */
 /* MX-27 [12] */
-static const char * const rt5659_mono_adc_l2_src[] = {
+static const char * rt5659_mono_adc_l2_src[] = {
 	"Mono DAC MIXL", "DMIC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_adc_l2_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_ADC_L2_SRC_SFT, rt5659_mono_adc_l2_src);
 
@@ -2483,11 +2483,11 @@ static const struct snd_kcontrol_new rt5659_mono_adc_l2_mux =
 
 /* MONO ADC L1 Source */
 /* MX-27 [11] */
-static const char * const rt5659_mono_adc_l1_src[] = {
+static const char * rt5659_mono_adc_l1_src[] = {
 	"Mono DAC MIXL", "ADC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_adc_l1_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_ADC_L1_SRC_SFT, rt5659_mono_adc_l1_src);
 
@@ -2496,18 +2496,18 @@ static const struct snd_kcontrol_new rt5659_mono_adc_l1_mux =
 
 /* MONO ADC L Source, MONO ADC R Source*/
 /* MX-27 [10:9], MX-27 [2:1] */
-static const char * const rt5659_mono_adc_src[] = {
+static const char * rt5659_mono_adc_src[] = {
 	"ADC1 L", "ADC1 R", "ADC2 L", "ADC2 R"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_adc_l_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_ADC_L_SRC_SFT, rt5659_mono_adc_src);
 
 static const struct snd_kcontrol_new rt5659_mono_adc_l_mux =
 	SOC_DAPM_ENUM("Mono ADC L Source", rt5659_mono_adc_l_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_adcr_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_ADC_R_SRC_SFT, rt5659_mono_adc_src);
 
@@ -2516,11 +2516,11 @@ static const struct snd_kcontrol_new rt5659_mono_adc_r_mux =
 
 /* MONO DMIC L Source */
 /* MX-27 [8] */
-static const char * const rt5659_mono_dmic_l_src[] = {
+static const char * rt5659_mono_dmic_l_src[] = {
 	"DMIC1 L", "DMIC2 L"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_dmic_l_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_DMIC_L_SRC_SFT, rt5659_mono_dmic_l_src);
 
@@ -2529,11 +2529,11 @@ static const struct snd_kcontrol_new rt5659_mono_dmic_l_mux =
 
 /* MONO ADC R2 Source */
 /* MX-27 [4] */
-static const char * const rt5659_mono_adc_r2_src[] = {
+static const char * rt5659_mono_adc_r2_src[] = {
 	"Mono DAC MIXR", "DMIC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_adc_r2_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_ADC_R2_SRC_SFT, rt5659_mono_adc_r2_src);
 
@@ -2542,11 +2542,11 @@ static const struct snd_kcontrol_new rt5659_mono_adc_r2_mux =
 
 /* MONO ADC R1 Source */
 /* MX-27 [3] */
-static const char * const rt5659_mono_adc_r1_src[] = {
+static const char * rt5659_mono_adc_r1_src[] = {
 	"Mono DAC MIXR", "ADC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_adc_r1_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_ADC_R1_SRC_SFT, rt5659_mono_adc_r1_src);
 
@@ -2555,11 +2555,11 @@ static const struct snd_kcontrol_new rt5659_mono_adc_r1_mux =
 
 /* MONO DMIC R Source */
 /* MX-27 [0] */
-static const char * const rt5659_mono_dmic_r_src[] = {
+static const char * rt5659_mono_dmic_r_src[] = {
 	"DMIC1 R", "DMIC2 R"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_mono_dmic_r_enum, RT5659_MONO_ADC_MIXER,
 	RT5659_MONO_DMIC_R_SRC_SFT, rt5659_mono_dmic_r_src);
 
@@ -2569,18 +2569,18 @@ static const struct snd_kcontrol_new rt5659_mono_dmic_r_mux =
 
 /* DAC R1 Source, DAC L1 Source*/
 /* MX-29 [11:10], MX-29 [9:8]*/
-static const char * const rt5659_dac1_src[] = {
+static const char * rt5659_dac1_src[] = {
 	"IF1 DAC1", "IF2 DAC", "IF3 DAC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_dac_r1_enum, RT5659_AD_DA_MIXER,
 	RT5659_DAC1_R_SEL_SFT, rt5659_dac1_src);
 
 static const struct snd_kcontrol_new rt5659_dac_r1_mux =
 	SOC_DAPM_ENUM("DAC R1 Source", rt5659_dac_r1_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_dac_l1_enum, RT5659_AD_DA_MIXER,
 	RT5659_DAC1_L_SEL_SFT, rt5659_dac1_src);
 
@@ -2589,18 +2589,18 @@ static const struct snd_kcontrol_new rt5659_dac_l1_mux =
 
 /* DAC Digital Mixer L Source, DAC Digital Mixer R Source*/
 /* MX-2C [6], MX-2C [4]*/
-static const char * const rt5659_dig_dac_mix_src[] = {
+static const char * rt5659_dig_dac_mix_src[] = {
 	"Stereo DAC Mixer", "Mono DAC Mixer"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_dig_dac_mixl_enum, RT5659_DIG_MIXER,
 	RT5659_DAC_MIX_L_SFT, rt5659_dig_dac_mix_src);
 
 static const struct snd_kcontrol_new rt5659_dig_dac_mixl_mux =
 	SOC_DAPM_ENUM("DAC Digital Mixer L Source", rt5659_dig_dac_mixl_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_dig_dac_mixr_enum, RT5659_DIG_MIXER,
 	RT5659_DAC_MIX_R_SFT, rt5659_dig_dac_mix_src);
 
@@ -2609,18 +2609,18 @@ static const struct snd_kcontrol_new rt5659_dig_dac_mixr_mux =
 
 /* Analog DAC L1 Source, Analog DAC R1 Source*/
 /* MX-2D [3], MX-2D [2]*/
-static const char * const rt5659_alg_dac1_src[] = {
+static const char * rt5659_alg_dac1_src[] = {
 	"DAC", "Stereo DAC Mixer"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_alg_dac_l1_enum, RT5659_A_DAC_MUX,
 	RT5659_A_DACL1_SFT, rt5659_alg_dac1_src);
 
 static const struct snd_kcontrol_new rt5659_alg_dac_l1_mux =
 	SOC_DAPM_ENUM("Analog DACL1 Source", rt5659_alg_dac_l1_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_alg_dac_r1_enum, RT5659_A_DAC_MUX,
 	RT5659_A_DACR1_SFT, rt5659_alg_dac1_src);
 
@@ -2629,18 +2629,18 @@ static const struct snd_kcontrol_new rt5659_alg_dac_r1_mux =
 
 /* Analog DAC LR Source, Analog DAC R2 Source*/
 /* MX-2D [1], MX-2D [0]*/
-static const char * const rt5659_alg_dac2_src[] = {
+static const char * rt5659_alg_dac2_src[] = {
 	"Stereo DAC Mixer", "Mono DAC Mixer"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_alg_dac_l2_enum, RT5659_A_DAC_MUX,
 	RT5659_A_DACL2_SFT, rt5659_alg_dac2_src);
 
 static const struct snd_kcontrol_new rt5659_alg_dac_l2_mux =
 	SOC_DAPM_ENUM("Analog DAC L2 Source", rt5659_alg_dac_l2_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_alg_dac_r2_enum, RT5659_A_DAC_MUX,
 	RT5659_A_DACR2_SFT, rt5659_alg_dac2_src);
 
@@ -2649,11 +2649,11 @@ static const struct snd_kcontrol_new rt5659_alg_dac_r2_mux =
 
 /* Interface2 ADC Data Input*/
 /* MX-2F [13:12] */
-static const char * const rt5659_if2_adc_in_src[] = {
+static const char * rt5659_if2_adc_in_src[] = {
 	"IF_ADC1", "IF_ADC2", "DAC_REF", "IF_ADC3"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_if2_adc_in_enum, RT5659_DIG_INF23_DATA,
 	RT5659_IF2_ADC_IN_SFT, rt5659_if2_adc_in_src);
 
@@ -2662,11 +2662,11 @@ static const struct snd_kcontrol_new rt5659_if2_adc_in_mux =
 
 /* Interface3 ADC Data Input*/
 /* MX-2F [1:0] */
-static const char * const rt5659_if3_adc_in_src[] = {
+static const char * rt5659_if3_adc_in_src[] = {
 	"IF_ADC1", "IF_ADC2", "DAC_REF", "Stereo2_ADC_L/R"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_if3_adc_in_enum, RT5659_DIG_INF23_DATA,
 	RT5659_IF3_ADC_IN_SFT, rt5659_if3_adc_in_src);
 
@@ -2675,18 +2675,18 @@ static const struct snd_kcontrol_new rt5659_if3_adc_in_mux =
 
 /* PDM 1 L/R*/
 /* MX-31 [15] [13] */
-static const char * const rt5659_pdm_src[] = {
+static const char * rt5659_pdm_src[] = {
 	"Mono DAC", "Stereo DAC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_pdm_l_enum, RT5659_PDM_OUT_CTRL,
 	RT5659_PDM1_L_SFT, rt5659_pdm_src);
 
 static const struct snd_kcontrol_new rt5659_pdm_l_mux =
 	SOC_DAPM_ENUM("PDM L Source", rt5659_pdm_l_enum);
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_pdm_r_enum, RT5659_PDM_OUT_CTRL,
 	RT5659_PDM1_R_SFT, rt5659_pdm_src);
 
@@ -2695,11 +2695,11 @@ static const struct snd_kcontrol_new rt5659_pdm_r_mux =
 
 /* SPDIF Output source*/
 /* MX-36 [1:0] */
-static const char * const rt5659_spdif_src[] = {
+static const char * rt5659_spdif_src[] = {
 	"IF1_DAC1", "IF1_DAC2", "IF2_DAC", "IF3_DAC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_spdif_enum, RT5659_SPDIF_CTRL,
 	RT5659_SPDIF_SEL_SFT, rt5659_spdif_src);
 
@@ -2708,7 +2708,7 @@ static const struct snd_kcontrol_new rt5659_spdif_mux =
 
 /* I2S1 TDM ADCDAT Source */
 /* MX-78[4:0] */
-static const char * const rt5659_rx_adc_data_src[] = {
+static const char * rt5659_rx_adc_data_src[] = {
 	"AD1:AD2:DAC:NUL", "AD1:AD2:NUL:DAC", "AD1:DAC:AD2:NUL",
 	"AD1:DAC:NUL:AD2", "AD1:NUL:DAC:AD2", "AD1:NUL:AD2:DAC",
 	"AD2:AD1:DAC:NUL", "AD2:AD1:NUL:DAC", "AD2:DAC:AD1:NUL",
@@ -2719,7 +2719,7 @@ static const char * const rt5659_rx_adc_data_src[] = {
 	"NUL:AD2:DAC:AD1", "NUL:DAC:DAC:AD2", "NUL:DAC:AD2:DAC"
 };
 
-static const SOC_ENUM_SINGLE_DECL(
+static SOC_ENUM_SINGLE_DECL(
 	rt5659_rx_adc_data_enum, RT5659_TDM_CTRL_2,
 	RT5659_ADCDAT_SRC_SFT, rt5659_rx_adc_data_src);
 
