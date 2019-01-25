@@ -6,7 +6,7 @@
 
 Name: linux-artik530
 Summary: The Linux Kernel for ARTIK530 Raptor
-Version: 4.4.113
+Version: 4.4.172
 Release: 0
 License: GPL-2.0
 ExclusiveArch: %{arm}
