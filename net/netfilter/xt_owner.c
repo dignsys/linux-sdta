@@ -22,6 +22,9 @@ static int owner_check(const struct xt_mtchk_param *par)
 {
 	struct xt_owner_match_info *info = par->matchinfo;
 
+	if (info->match & ~XT_OWNER_MASK)
+		return -EINVAL;
+
 	/* For now only allow adding matches from the initial user namespace */
 	if ((info->match & (XT_OWNER_UID|XT_OWNER_GID)) &&
 	    (current_user_ns() != &init_user_ns))
