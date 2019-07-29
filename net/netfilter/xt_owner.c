@@ -74,7 +74,7 @@ owner_mt(const struct sk_buff *skb, struct xt_action_param *par)
 
 		if (!match && (info->match & XT_OWNER_SUPPL_GROUPS) && gi) {
 			for (i = 0; i < gi->ngroups; ++i) {
-				kgid_t group = gi->gid[i];
+				kgid_t group = GROUP_AT(gi, i);
 
 				if (gid_gte(group, gid_min) &&
 				    gid_lte(group, gid_max)) {
