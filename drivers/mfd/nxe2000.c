@@ -108,7 +108,7 @@ static inline int set_bank_nxe2000(struct device *dev, int bank)
 {
 	struct nxe2000 *nxe2000 = dev_get_drvdata(dev);
 	int ret;
-
+ 
 	if (bank != (bank & 1))
 		return -EINVAL;
 	if (bank == nxe2000->bank_num)

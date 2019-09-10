@@ -37,6 +37,7 @@
 	};
 };
 
+#if 0 /* HBAHN */
 &sd8x_rfkill {
 	bt-wlan-1p8-gpio = <&gpio_a 18 0>; /* GPIOA18=BT_WLAN_1P8_PDN output*/
 	wlan-2p2-gpio = <&gpio_b 14 0>; /* GPIOB14=WLAN_2P2_PDN output*/
@@ -47,3 +48,4 @@
 &usb3503 {
 	/delete-property/connect-gpios;
 };
+#endif /* HBAHN */

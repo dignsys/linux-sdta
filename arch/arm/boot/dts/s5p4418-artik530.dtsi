@@ -39,6 +39,7 @@
 			spi2:spi@c00a7000  { clock-frequency = <80000000>; };
 		};
 
+#if 0 /* HBAHN */
 		dw_mmc_2:dw_mmc@c0069000 {
 			num-slots = <1>;
 			bus-width = <4>;
@@ -55,6 +56,7 @@
 			nexell,sample_shift = <0x01>;
 			disable-data-tag;
 		};
+#endif /* HBAHN */
 
 		pinctrl@C0010000 {
 			cfg_wlanhostwake: cfg-wlanhostwake {
@@ -65,6 +67,7 @@
 			};
 		};
 	};	/*** soc ***/
+
 	artik_zb_power {
 		compatible = "samsung,artik_zb_power";
 		vdd_zb-supply = <&VCC_LDO2>;
@@ -76,9 +79,10 @@
 	artik_s3t9mf {
 		compatible = "samsung,s3t9mf";
 		reset-gpio = <&gpio_b 26 0>;
-		status = "okay";
+		status = "disabled";
 	};
 
+#if 0
 	sd8x_rfkill: sd8x-rfkill {
 		 compatible = "mrvl,sd8x-rfkill";
 		 sd-host = <&dw_mmc_1>;
@@ -106,6 +110,7 @@
 		 init_cfg = "mrvl/bt_init_cfg.conf";
 		 cal_cfg = "mrvl/bt_cal_data.conf";
 	};
+#endif
 
 	thermal_ap:thermal {
 		#thermal-sensor-cells = <0>;
@@ -162,6 +167,7 @@
 	arm,data-latency = <3 4 3>;
 };
 
+#if 0
 &dw_mmc_1 {
 	status = "okay";
 	num-slots = <1>;
@@ -183,6 +189,39 @@
 
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdmmc1_cclk &sdmmc1_cmd &sdmmc1_bus4 &cfg_wlanhostwake>;
+};
+#endif
+
+&dw_mmc_0 {
+	num-slots = <1>;
+	bus-width = <4>;
+	cap-mmc-highspeed;
+	broken-cd;
+	non-removable;
+	clock-frequency = <100000000>;
+	card-detect-delay = <200>;
+	disable-wp;
+	nexell,drive_dly = <0x0>;
+	nexell,drive_shift = <0x03>;
+	nexell,sample_dly = <0x00>;
+	nexell,sample_shift = <0x02>;
+	status = "okay";
+};
+
+&dw_mmc_1 {
+	num-slots = <1>;
+	bus-width = <4>;
+	cap-sd-highspeed;
+	clock-frequency = <100000000>;
+	card-detect-delay = <200>;
+	disable-wp;
+	cd-gpios = <&gpio_e 31 0>;
+	cd-inverted;
+	nexell,drive_dly = <0x0>;
+	nexell,drive_shift = <0x02>;
+	nexell,sample_dly = <0x00>;
+	nexell,sample_shift = <0x01>;
+	status = "okay";
 };
 
 &spi2_bus {
