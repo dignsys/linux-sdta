@@ -118,7 +118,7 @@
 			ldo10	{ PMIC_PDATA_INIT(14,
 				"nxe2000_ldo10",
 				1000000, 3500000,
-				1200000, 1, 1, 0x0)
+				1000000, 1, 1, 0x0)
 				regulator-always-on;
 				regulator-boot-on;};
 		VCC_RTC0:
