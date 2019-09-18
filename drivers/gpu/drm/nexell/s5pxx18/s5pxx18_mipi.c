@@ -491,6 +491,8 @@ static int mipi_ops_prepare(struct nx_drm_display *display)
 				nx_mipi_dsi_lpmode_hs);
 	}
 
+	display->check_panel = true; // HBAHN
+
 	return 0;
 }
 
@@ -635,6 +637,9 @@ static int mipi_ops_unprepare(struct nx_drm_display *display)
 	mutex_lock(&mipi->lock);
 	nx_mipi_dsi_set_clock(index, 0, 0, 1, 1, 1, 0, 0, 0, 0, 10);
 	mutex_unlock(&mipi->lock);
+
+	display->check_panel = false; // HBAHN
+
 	return 0;
 }
 

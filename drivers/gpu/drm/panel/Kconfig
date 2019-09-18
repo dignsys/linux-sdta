@@ -57,4 +57,16 @@ config DRM_PANEL_SHARP_LQ101R1SX01
 	  To compile this driver as a module, choose M here: the module
 	  will be called panel-sharp-lq101r1sx01.
 
+config DRM_PANEL_HX8394D
+	tristate "HX8394D DSI video mode panel"
+	depends on OF
+	select DRM_MIPI_DSI
+	select VIDEOMODE_HELPERS
+
+config DRM_PANEL_AVDTT80WXCN039A
+	tristate "AVD-TT80WX-CN-039-A"
+	depends on OF
+	select DRM_MIPI_DSI
+	select VIDEOMODE_HELPERS
+
 endmenu

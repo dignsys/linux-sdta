@@ -808,44 +808,43 @@
 };
 
 &dp_drm_mipi {
-	hs_bitrate = <960>;
+	hs_bitrate = <420>;
 	lp_bitrate = <100>;
 	status = "ok";
+	skip_panel_check = <1>;
 
 	panel@0 {
-		compatible = "samsung,s6e8fa0";
+		compatible = "hx8394d";
 		reg = <0>;
+		backlight = <&backlight>;
 		vdd3-supply = <&VCC_LDO0>;
-		vci-supply = <&VCC_LDO1>;
-		reset-gpio = <&gpio_e 30 0>;
+		vci-supply = <&VCC_LDO8>;
+		reset-gpio = <&gpio_c 11 0>;
 		power-on-delay= <50>;
 		reset-delay = <100>;
 		init-delay = <100>;
-		panel-width-mm = <62>;
-		panel-height-mm = <110>;
-		display-timings {
-			timing-0 {
-				clock-frequency = <130361520>;
-				hactive = <1080>;
-				vactive = <1920>;
-				hfront-porch = <32>;
-				hback-porch = <16>;
-				hsync-len = <12>;
-				vfront-porch = <12>;
-				vback-porch = <3>;
-				vsync-len = <1>;
-			};
-		};
+		display-timing {
+			clock-frequency = <65431680>;
+			hactive = <800>;
+			vactive = <1280>;
+			hfront-porch = <10>;
+			hback-porch = <30>;
+			hsync-len = <8>;
+			vfront-porch = <2>;
+			vback-porch = <2>;
+			vsync-len = <2>;
+		}; 
+
 	};
 
 	dp_control {
 		clk_src_lv0 = <0>;
-		clk_div_lv0 = <6>;
+		clk_div_lv0 = <12>;
 		clk_src_lv1 = <7>;
 		clk_div_lv1 = <1>;
 		out_format = <3>;
-		vs_start_offset = <480>;
-		ev_start_offset = <480>;
+		vs_start_offset = <0>;
+		ev_start_offset = <0>;
 		vs_end_offset = <0>;
 		ev_end_offset = <0>;
 	};
