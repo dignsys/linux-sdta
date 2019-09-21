@@ -18,6 +18,7 @@
 
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
 #include "s5p4418-artik530.dtsi"
 
 #define PMIC_PDATA_INIT(_id, _rname, _minuv,	\
@@ -94,12 +95,10 @@
 			clock-names = "pwm-tclk0", "pwm-tclk1", "pwm-tclk2", "pwm-tclk3";
 		};
 
-#if 0 /* HBAHN */
 		dynamic-freq@bb000 {
 			supply_name = "vdd_core_regulator";
 			vdd_core_regulator-supply = <&VCC_DCDC0>;
 		};
-#endif /* HBAHN */
 
 		serial2:serial@c00a2000 {
 			status ="okay";
@@ -108,24 +107,6 @@
 		serial3:serial@c00a3000 {
 			status ="okay";
 		};
-
-#if 0 /* HBAHN */
-		dw_mmc_0:dw_mmc@c0062000 {
-			num-slots = <1>;
-			bus-width = <4>;
-			cap-sd-highspeed;
-			clock-frequency = <100000000>;
-			card-detect-delay = <200>;
-			disable-wp;
-			cd-gpios = <&gpio_b 16 0>;
-			cd-inverted;
-			nexell,drive_dly = <0x0>;
-			nexell,drive_shift = <0x02>;
-			nexell,sample_dly = <0x00>;
-			nexell,sample_shift = <0x01>;
-			status = "okay";
-		};
-#endif /* HBAHN */
 
 		nexell_usbphy: nexell-usbphy@c0012000 {
 			status = "okay";
@@ -164,8 +145,6 @@
 				PIN_OUT(gpioa-27, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpiob-9, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpiob-14, LOW, FUNC2, NONE, STR0);
-				PIN_OUT(gpioe-0, LOW, FUNC0, NONE, STR0);
-				PIN_OUT(gpioe-1, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-2, LOW, FUNC0, NONE, STR0);
 
 				/* NC */
@@ -175,8 +154,6 @@
 				PIN_OUT(gpioc-7, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-24, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-28, LOW, FUNC0, NONE, STR0);
-				PIN_OUT(gpiod-29, LOW, FUNC0, NONE, STR0);
-				PIN_OUT(gpiod-30, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-12, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-13, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-22, LOW, FUNC0, NONE, STR0);
@@ -193,14 +170,55 @@
 				PIN_IN(gpioa-11, FUNC0, NONE, STR0);
 				PIN_IN(gpiob-27, FUNC1, NONE, STR0);
 				PIN_IN(gpiod-8, FUNC0, NONE, STR0);
-				PIN_IN(gpiod-28, FUNC0, NONE, STR0);
 			};
 
-			key_pwr:key_pwr {
+			key_power:key_power {
 				nexell,pins = "alive-0";
-				nexell,pin-function = <NX_PIN_FUNC0>;
-				nexell,pin-pull = <NX_PIN_PULL_UP>;
-				nexell,pin-strength = <NX_PIN_STR0>;
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_homepage:key_homepage {
+				nexell,pins = "gpiod-28";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_enter:key_enter {
+				nexell,pins = "gpiod-29";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_volup:key_volup {
+				nexell,pins = "gpiod-30";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_voldown:key_voldown {
+				nexell,pins = "gpiod-31";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_func1:key_func1 {
+				nexell,pins = "gpioe-0";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+            		};
+
+			key_func2:key_func2 {
+				nexell,pins = "gpioe-1";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
 			};
 
 			pmic_irq:pmic_irq{
@@ -228,6 +246,13 @@
 				nexell,pins = "gpioc-25";
 				nexell,pin-function = <NX_PIN_FUNC0>;
 				nexell,pin-pull = <NX_PIN_PULL_UP>;
+				nexell,pin-strength = <NX_PIN_STR0>;
+			};
+
+			bt_reg_on: bt_reg_on {
+				nexell,pins = "gpiob-18";
+				nexell,pin-function = <NX_PIN_FUNC2>;
+				nexell,pin-pull = <NX_PIN_PULL_NONE>;
 				nexell,pin-strength = <NX_PIN_STR0>;
 			};
 		};
@@ -365,57 +390,74 @@
 
 	backlight: pwm-backlight {
 		compatible = "pwm-backlight";
-		pwms = <&pwm 0 20000 0>;
+		pwms = <&pwm 2 20000 1>;
 		pwm-names = "pwm-backlight";
-		brightness-levels = < 0  1  2  3  4  5  6  7  8  9
-				     10 11 12 13 14 15 16 17 18 19
-				     20 21 22 23 24 25 26 27 28 29
-				     30 31 32 33 34 35 36 37 38 39
+
+		brightness-levels = <30 31 32 33 34 35 36 37 38 39
 				     40 41 42 43 44 45 46 47 48 49
 				     50 51 52 53 54 55 56 57 58 59
 				     60 61 62 63 64 65 66 67 68 69
 				     70 71 72 73 74 75 76 77 78 79
 				     80 81 82 83 84 85 86 87 88 89
-				     90 91 92 93 94 95 96 97 98 99
-				    100>;
-		default-brightness-level = <60>;
+				     90>;
+		default-brightness-level = <45>;
+		enable-gpio = <&gpio_d 0 0>;
 		status = "okay";
 	};
 
+	wifi32k: wifi32k {
+		compatible = "pwm-clock";
+		#clock-cells = <0>;
+		clock-frequency = <32768>;
+		pwms = <&pwm 0 30518 0>;
+	};
+
+	wifi_pwrseq: wifi-pwrseq {
+		compatible = "mmc-pwrseq-simple";
+		reset-gpios = <&gpio_b 12 GPIO_ACTIVE_LOW>;
+//		clocks = <&wifi32k>;
+//		clock-names = "lpo";
+	};
+
+	bt_control {
+//		compatible = "broadcom,bcm43xxbt";
+		compatible = "broadcom,bcm434545bt";
+		gpios = <&gpio_b 18 0>;
+		pinctrl-names = "bt reg on";
+		pinctrl-0 = <&bt_reg_on>;
+		status = "okay";
+	};
+
+
+#if 0
 	panel: panel-simple {
 		compatible = "dongguan,gst7d0038";
 		backlight = <&backlight>;
-		status = "okay";
+		status = "disabled";
 
 		port {
 			lvds_panel: endpoint {
 			};
 		};
 	};
+#endif
 
 	i2c_gpio4: i2c@4 {
 		compatible = "i2c-gpio";
-		gpios = <&gpio_d 31 0	/* SDA */
-			&gpio_e 3 0	/* SCL */
+		gpios = <&gpio_e 6 0	/* SDA */
+			 &gpio_e 5 0	/* SCL */
 			>;
+		i2c-gpio,delay-us = <100>;
 		#address-cells = <1>;
 		#size-cells = <0>;
-		i2c-gpio,delay-us = <100>;
 		status = "okay";
 
-#if 0	/* HBAHN */
-		rtc@68 {
-			compatible = "maxim,ds1337";
-			reg = <0x68>;
-			interrupt-parent = <&alive_0>;
-			interrupts = <0x2 IRQ_TYPE_EDGE_FALLING>;
-			/* If it's first boot, reset to 4/29/2016(Fri) UTC */
-			init_time,year = <116>;
-			init_time,mon = <3>;
-			init_time,mday = <29>;
-			init_time,wday = <5>;
+		/* sound codec */
+		alc5623: alc5623@1a {
+			#sound-dai-cells = <0>;
+			compatible = "realtek,alc5623";
+			reg = <0x1a>;
 		};
-#endif	/* HBAHN */
 	};
 
 	i2c_gpio5: i2c@5 {
@@ -427,7 +469,6 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-#if 0	/* HBAHN */
 		usb3503: usb3503@08 {
 			compatible = "smsc,usb3503";
 			reg = <0x08>;
@@ -436,7 +477,6 @@
 			reset-gpios = <&gpio_a 22 0>;
 			initial-mode = <1>;
 		};
-#endif	/* HBAHN */
 	};
 
 	i2c_gpio6:i2c@6 {
@@ -552,7 +592,7 @@
 		    };
 
 		    codec {
-			sound-dai = <&alc5658>;
+			sound-dai = <&alc5623>;
 		    };
 		};
 
@@ -572,32 +612,57 @@
 		compatible = "linux,spdif-dit";
 	};
 
-	gpio_keys {
+	gpio_key: gpio_keys {
 		compatible = "gpio-keys";
 		#address-cells = <1>;
 		#size-cells = <0>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&key_pwr>;
+		pinctrl-0 = <&key_power &key_func1 &key_func2>,
+			<&key_homepage &key_enter &key_volup &key_voldown>;
 
 		power {
 			label = "Power";
-			gpios = <&alive_0 0 1>;
+			gpios = <&alive_0 0 0>;
 			linux,code = <KEY_POWER>;
 			gpio-key,wakeup;
 		};
 
-		wakeup {
-			label = "Wakeup";
-			gpios = <&alive_0 1 1>;
-			linux,code = <KEY_WAKEUP>;
+		back {
+			label = "Back";
+			gpios = <&gpio_e 0 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_BACK>;
+		};
+
+		menu {
+			label = "Menu";
+			gpios = <&gpio_e 1 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_MENU>;
+		};
+
+		homepage {
+			label = "Homepage";
+			gpios = <&gpio_d 28 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_HOMEPAGE>;
 			gpio-key,wakeup;
 		};
 
-		keyback {
-			label = "Back";
-			gpios = <&gpio_b 0 1>;
-			linux,code = <KEY_BACK>;
-			gpio-key;
+		key_enter {
+			label = "Enter";
+			gpios = <&gpio_d 29 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_ENTER>;
+			gpio-key,wakeup;
+		};
+
+		key_volup {
+			label = "Volume Up";
+			gpios = <&gpio_d 30 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_VOLUMEUP>;
+		};
+
+		key_voldown {
+			label = "Volume Down";
+			gpios = <&gpio_d 31 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_VOLUMEDOWN>;
 		};
 	};
 
@@ -719,14 +784,12 @@
 	}; /* regulators */
 
 
-#if 0 /* HBAHN */
 	nx-devfreq {
 		pll = <3>;
 		supply_name = "vdd_arm_regulator";
 		vdd_arm_regulator-supply = <&VCC_DCDC1>;
 		status = "okay";
 	};
-#endif /* HBAHN */
 
 };
 
@@ -762,31 +825,21 @@
 &i2c_2 {
 	#address-cells = <1>;
 	#size-cells = <0>;
+	rate = <400000>;
 	status = "okay";
 
-#if 0 /* HBAHN */
-	touchscreen@4a {
-		compatible = "atmel,maxtouch";
-		reg = <0x4a>;
-		interrupt-parent = <&gpio_b>;
-		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&touchpanel_irq>;
-		skip-cfg-load;
-		switch-xy;
-	};
-
-	touchscreen@20 {
-		compatible = "zinitix,zinitix_touch";
-		reg = <0x20>;
-		interrupt-parent = <&gpio_b>;
+	/* touch screen */
+	goodix@5d {
+		compatible = "goodix,gt911";
+		reg = <0x5d>;
+		interrupt-parent = <&gpio_d>;
 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpio = <&gpio_c 25 1>;
-		int-gpio = <&gpio_b 8 0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&tsp_irq &tsp_reset>;
+		irq-gpios = <&gpio_d 8 0>;
+		reset-gpios = <&gpio_b 0 0>;
+		touchscreen-inverted-x;
+//		touchscreen-inverted-y;
+//		touchscreen-swapped-x-y;
 	};
-#endif /* HBAHN */
 };
 
 &dp_drm {
@@ -813,28 +866,27 @@
 	status = "ok";
 	skip_panel_check = <1>;
 
+	display-timing {
+		clock-frequency = <65431680>;
+		hactive = <800>;
+		vactive = <1280>;
+		hfront-porch = <10>;
+		hback-porch = <30>;
+		hsync-len = <8>;
+		vfront-porch = <2>;
+		vback-porch = <2>;
+		vsync-len = <2>;
+	};
+
 	panel@0 {
 		compatible = "hx8394d";
 		reg = <0>;
-		backlight = <&backlight>;
 		vdd3-supply = <&VCC_LDO0>;
 		vci-supply = <&VCC_LDO8>;
 		reset-gpio = <&gpio_c 11 0>;
 		power-on-delay= <50>;
 		reset-delay = <100>;
 		init-delay = <100>;
-		display-timing {
-			clock-frequency = <65431680>;
-			hactive = <800>;
-			vactive = <1280>;
-			hfront-porch = <10>;
-			hback-porch = <30>;
-			hsync-len = <8>;
-			vfront-porch = <2>;
-			vback-porch = <2>;
-			vsync-len = <2>;
-		}; 
-
 	};
 
 	dp_control {
@@ -853,11 +905,12 @@
 &dp_drm_hdmi {
 	ddc-i2c-bus = <&i2c_gpio7>;
 	enable-gpios = <&gpio_a 21 0>;
-	status = "ok";
+	status = "disabled";
 };
 
+#if 0 /* HBAHN */
 &dp_drm_lvds {
-	status = "ok";
+	status = "disabled";
 
 	remote-endpoint = <&lvds_panel>;
 
@@ -868,4 +921,42 @@
 		clk_div_lv1 = <1>;
 		out_format = <3>;
 	};
+};
+#endif
+
+&dw_mmc_1 {
+	pinctrl-names = "default";
+	mmc-pwrseq = <&wifi_pwrseq>;
+
+	cap-sd-highspeed;
+	cap-sdio-irq;
+	mmc-ddr-3_3v;
+	broken-cd;
+	non-removable;
+	disable-wp;
+	nexell,drive_shift = <0x04>;
+	nexell,sample_shift = <0x04>;
+
+	clock-frequency = <100000000>;
+	status = "okay";
+
+	brcmf: wifi@1 {
+		reg = <1>;
+		compatible = "brcm,bcm4329-fmac";
+		interrupt-parent = <&gpio_b>;
+		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+		interrupt-names = "host-wake";
+		brcm,drive-strength = <6>;
+	};
+};
+
+&dw_mmc_2 {
+	cap-sd-highspeed;
+	cd-gpios = <&gpio_c 17 0>;
+	cd-inverted;
+	nexell,drive_shift = <0x04>;
+	nexell,sample_shift = <0x04>;
+	card-detect-delay = <200>;
+	disable-wp;
+	status = "okay";
 };

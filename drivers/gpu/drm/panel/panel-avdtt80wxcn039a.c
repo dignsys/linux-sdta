@@ -295,7 +295,6 @@ static int hx8394d_power_on(struct hx8394d *ctx)
 		return 0;
 
 #ifndef CONFIG_DRM_CHECK_PRE_INIT
-printk("### HBAHN[%s:%s:%d] : \n",__FILE__,__FUNCTION__, __LINE__);
 	gpio_direction_output(ctx->reset_gpio, 1);
 	msleep(10);
 	gpio_set_value(ctx->reset_gpio, 0);
@@ -316,7 +315,6 @@ static int hx8394d_dsi_set_sequence(struct hx8394d *ctx)
 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
 	int ret;
 
-printk("### HBAHN[%s:%s:%d] : \n",__FILE__,__FUNCTION__, __LINE__);
 	ret = hx8394d_power_on(ctx);
 	if (ret < 0)
 		goto out;
@@ -338,7 +336,6 @@ static int hx8394d_dsi_disable(struct drm_panel *panel)
 {
 	struct hx8394d *ctx = panel_to_hx8394d(panel);
 
-printk("### HBAHN[%s:%s:%d] : \n",__FILE__,__FUNCTION__, __LINE__);
 	hx8394d_dcs_write_seq(ctx, DISPOFF);
 	if (ctx->error < 0)
 		return ctx->error;
@@ -396,7 +393,6 @@ static int hx8394d_dsi_enable(struct drm_panel *panel)
 {
 	struct hx8394d *ctx = panel_to_hx8394d(panel);
 
-printk("### HBAHN[%s:%s:%d] : \n",__FILE__,__FUNCTION__, __LINE__);
 	hx8394d_dcs_write_seq(ctx, SLPOUT);
 	if (ctx->error < 0)
 		return ctx->error;

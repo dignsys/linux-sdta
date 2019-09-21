@@ -23,23 +23,25 @@
 #include <video/videomode.h>
 #include <linux/backlight.h>
 
-#define PX0701C_WIDTH_MM		107  /* real: 94.2 */
-#define PX0701C_HEIGHT_MM		172 /* real: 150.72 */
+#define H_ACTIVE     		800
+#define V_ACTIVE     		1280
 
-#define HFP_ALLO         256
-#define HBP_ALLO         158
-#define HSA_ALLO         5
-#define VFP_ALLO         15
-#define VBP_ALLO         10
-#define VSA_ALLO         4
+#define H_FRONT_PORCH		(10+100)
+#define H_BACK_PORCH		(30+100)
+#define HS_LOW_PULSE_WIDTH	(8)
 
-#define HACTIVE     800
-#define VACTIVE     1280
+#define V_FRONT_PORCH		(2+10)
+#define V_BACK_PORCH		(2+5)
+#define VS_LOW_PULSE_WIDTH	(2+1)
 
-#define DISPOFF		0x28
-#define SLPIN		0x10
-#define SLPOUT		0x11
-#define DISPON		0x29
+#define VREFRESH		60
+#define WIDTH_MM		107
+#define HEIGHT_MM		172
+
+#define DISPOFF			0x28
+#define SLPIN			0x10
+#define SLPOUT			0x11
+#define DISPON			0x29
 
 struct hx8394d {
 	struct device *dev;
@@ -393,17 +395,23 @@ static int hx8394d_unprepare(struct drm_panel *panel)
 }
 
 static const struct drm_display_mode default_mode = {
-	.clock = (int)(((HACTIVE + HBP_ALLO + HFP_ALLO + HSA_ALLO) *
-				(VACTIVE + VBP_ALLO + VFP_ALLO + VSA_ALLO) * 60)/1000),
-	.hdisplay = HACTIVE,
-	.hsync_start = HACTIVE + HBP_ALLO,	/* hactive + hbackporch */
-	.hsync_end = HACTIVE + HBP_ALLO + HSA_ALLO,	/* hsync_start + hsyncwidth */
-	.htotal = HACTIVE + HBP_ALLO + HSA_ALLO + HFP_ALLO,	/* hsync_end + hfrontporch */
-	.vdisplay = VACTIVE,
-	.vsync_start = VACTIVE + VBP_ALLO,	/* vactive + vbackporch */
-	.vsync_end = VACTIVE + VBP_ALLO + VSA_ALLO,	/* vsync_start + vsyncwidth */
-	.vtotal = VACTIVE + VBP_ALLO + VSA_ALLO + VFP_ALLO,	/* vsync_end + vfrontporch */
-	.vrefresh = 60,			/* Hz */
+	.clock		= (int)(((H_ACTIVE + H_BACK_PORCH + H_FRONT_PORCH + HS_LOW_PULSE_WIDTH) *
+				(V_ACTIVE + V_BACK_PORCH + V_FRONT_PORCH + VS_LOW_PULSE_WIDTH) * VREFRESH) / 1000),
+
+	.hdisplay	= H_ACTIVE,
+	.hsync_start	= H_ACTIVE + H_BACK_PORCH, 					/* hactive + hbackporch */
+	.hsync_end	= H_ACTIVE + H_BACK_PORCH + HS_LOW_PULSE_WIDTH, 		/* hsync_start + hsyncwidth */
+	.htotal		= H_ACTIVE + H_BACK_PORCH + HS_LOW_PULSE_WIDTH + H_FRONT_PORCH, /* hsync_end + hfrontporch */
+
+	.vdisplay	= V_ACTIVE,
+	.vsync_start	= V_ACTIVE + V_BACK_PORCH, 					/* vactive + vbackporch */
+	.vsync_end	= V_ACTIVE + V_BACK_PORCH + VS_LOW_PULSE_WIDTH, 		/* vsync_start + vsyncwidth */
+	.vtotal		= V_ACTIVE + V_BACK_PORCH + VS_LOW_PULSE_WIDTH + V_FRONT_PORCH, /* vsync_end + vfrontporch */
+
+	.vrefresh	= VREFRESH, 							/* Hz */
+
+	.width_mm	= WIDTH_MM,
+	.height_mm	= HEIGHT_MM,
 };
 
 /**
@@ -427,8 +435,6 @@ static int hx8394d_get_modes(struct drm_panel *panel)
 
 	mode = drm_mode_duplicate(panel->drm, &default_mode);
 	drm_mode_set_name(mode);
-	mode->width_mm = ctx->width_mm;
-	mode->height_mm = ctx->height_mm;
 	connector->display_info.width_mm = mode->width_mm;
 	connector->display_info.height_mm = mode->height_mm;
 
@@ -464,11 +470,6 @@ static int hx8394d_probe(struct mipi_dsi_device *dsi)
 	struct device_node *backlight;
 	struct hx8394d *ctx;
 	int ret;
-
-#if 0
-	if (!drm_panel_connected("hx8394d"))
-		return -ENODEV;
-#endif
 
 	ctx = devm_kzalloc(dev, sizeof(struct hx8394d), GFP_KERNEL);
 	if (!ctx)
@@ -535,8 +536,8 @@ static int hx8394d_probe(struct mipi_dsi_device *dsi)
 	}
 #endif
 
-	ctx->width_mm = PX0701C_WIDTH_MM;
-	ctx->height_mm = PX0701C_HEIGHT_MM;
+	ctx->width_mm = WIDTH_MM;
+	ctx->height_mm = HEIGHT_MM;
 
 	drm_panel_init(&ctx->panel);
 	ctx->panel.dev = dev;
