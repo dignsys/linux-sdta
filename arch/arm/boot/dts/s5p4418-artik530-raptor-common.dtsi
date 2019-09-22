@@ -444,20 +444,13 @@
 
 	i2c_gpio4: i2c@4 {
 		compatible = "i2c-gpio";
-		gpios = <&gpio_e 6 0	/* SDA */
-			 &gpio_e 5 0	/* SCL */
+		gpios = <&gpio_a 5 0 /* sda */
+			&gpio_a 4 0 /* scl */
 			>;
 		i2c-gpio,delay-us = <100>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 		status = "okay";
-
-		/* sound codec */
-		alc5623: alc5623@1a {
-			#sound-dai-cells = <0>;
-			compatible = "realtek,alc5623";
-			reg = <0x1a>;
-		};
 	};
 
 	i2c_gpio5: i2c@5 {
@@ -481,17 +474,25 @@
 
 	i2c_gpio6:i2c@6 {
 		compatible = "i2c-gpio";
-		gpios = <&gpio_a 5 0 /* sda */
-			&gpio_a 4 0 /* scl */
+		gpios = <&gpio_e 6 0	/* SDA */
+			 &gpio_e 5 0	/* SCL */
 			>;
 		i2c-gpio,delay-us = <1>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		alc5658: alc5658@1a {
+		/* sound codec */
+		alc5623: alc5623@1a {
 			#sound-dai-cells = <0>;
-			compatible = "realtek,rt5658";
+			compatible = "realtek,alc5623";
 			reg = <0x1a>;
+		};
+
+		/* RTC provided by Seiko S-35390A I2C RTC chip */
+		s35390a: s35390a@30 {
+			status = "okay";
+			compatible = "sii,s35390a";
+			reg = <0x30>;
 		};
 	};
 
@@ -639,10 +640,10 @@
 			linux,code = <KEY_MENU>;
 		};
 
-		homepage {
-			label = "Homepage";
+		home {
+			label = "Home";
 			gpios = <&gpio_d 28 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_HOMEPAGE>;
+			linux,code = <KEY_HOME>;
 			gpio-key,wakeup;
 		};
 
@@ -951,12 +952,19 @@
 };
 
 &dw_mmc_2 {
+	num-slots = <1>;
+	bus-width = <4>;
 	cap-sd-highspeed;
-	cd-gpios = <&gpio_c 17 0>;
-	cd-inverted;
-	nexell,drive_shift = <0x04>;
-	nexell,sample_shift = <0x04>;
+	clock-frequency = <100000000>;
 	card-detect-delay = <200>;
 	disable-wp;
+	cd-inverted;
+	nexell,drive_dly = <0x0>;
+	nexell,drive_shift = <0x02>;
+	nexell,sample_dly = <0x00>;
+	cd-gpios = <&gpio_c 17 0>;
 	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc2_cclk &sdmmc2_cmd &sdmmc2_bus4>;
 };
