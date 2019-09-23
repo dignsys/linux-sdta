@@ -327,4 +327,11 @@ config BT_BCM43455
 	  Adds BCM43455 RFKILL driver for Broadcom BCM43455 chipset.
 	  default is n.
 
+config BT_BCM43xx
+	tristate "Enable BCM43xx driver"
+	default n
+	help
+	  Adds BCM43xx RFKILL driver for Broadcom BCM43xx chipset.
+	  default is n.
+
 endmenu
