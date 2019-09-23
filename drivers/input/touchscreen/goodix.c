@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2014 Red Hat Inc.
  *  Copyright (c) 2015 K. Merker <merker@debian.org>
+*	Copyright (c) 2015 K. Merker <merker@debian.org>
  *
  *  This code is based on gt9xx.c authored by andrew@goodix.com:
  *
