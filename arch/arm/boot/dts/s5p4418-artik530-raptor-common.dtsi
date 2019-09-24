@@ -429,6 +429,8 @@
 	wifi_pwrseq: wifi-pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		reset-gpios = <&gpio_b 12 GPIO_ACTIVE_LOW>;
+		post-power-on-delay-ms = <700>;
+		power-off-delay-us = "60";
 //		clocks = <&wifi32k>;
 //		clock-names = "lpo";
 	};
