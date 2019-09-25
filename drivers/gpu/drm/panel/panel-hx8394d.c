@@ -38,6 +38,7 @@
 #define WIDTH_MM		107
 #define HEIGHT_MM		172
 
+#define WRDISBV			0x51
 #define DISPOFF			0x28
 #define SLPIN			0x10
 #define SLPOUT			0x11
@@ -124,6 +125,35 @@ static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data,
 	static const u8 d[] = { seq }; \
 	_dcs_write(ctx, d, ARRAY_SIZE(d)); \
 })
+
+static int hx8394d_dsi_get_display_brightness(struct backlight_device *bl_dev)
+{
+	return bl_dev->props.brightness;
+}
+
+static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
+{
+	struct hx8394d *ctx = (struct hx8394d *)bl_get_data(bl_dev);
+	int brightness = bl_dev->props.brightness;
+	u8 data[2] = { WRDISBV, };
+
+	if (!ctx->is_power_on) {
+		return -ENODEV;
+	}
+
+	if (brightness < 0 || brightness > 255)
+		return -EINVAL;
+
+	data[1] = brightness;
+	_dcs_write(ctx, data, 2);
+
+	return 0;
+}
+
+static const struct backlight_ops hx8394d_bl_ops = {
+	.get_brightness = hx8394d_dsi_get_display_brightness,
+	.update_status = hx8394d_dsi_set_display_brightness,
+};
 
 static void _set_sequence(struct hx8394d *ctx)
 {
@@ -262,7 +292,7 @@ static void _set_sequence(struct hx8394d *ctx)
 		{2,
 		0xDF,0x8E},
 	};
-	int i, ret;
+	int i;
 	u8 *pd;
 
 	hx8394d_dcs_write_seq(ctx, DISPOFF);
@@ -282,8 +312,6 @@ static void _set_sequence(struct hx8394d *ctx)
 
 	hx8394d_dcs_write_seq(ctx, DISPON);
 	msleep(150);
-
-	return 0;
 }
 #endif
 
@@ -423,7 +451,6 @@ static const struct drm_display_mode default_mode = {
 static int hx8394d_get_modes(struct drm_panel *panel)
 {
 	struct drm_connector *connector = panel->connector;
-	struct hx8394d *ctx = panel_to_hx8394d(panel);
 	struct drm_display_mode *mode;
 
 	mode = drm_mode_create(connector->dev);
@@ -467,7 +494,6 @@ static int hx8394d_parse_dt(struct hx8394d *ctx)
 static int hx8394d_probe(struct mipi_dsi_device *dsi)
 {
 	struct device *dev = &dsi->dev;
-	struct device_node *backlight;
 	struct hx8394d *ctx;
 	int ret;
 
@@ -525,16 +551,16 @@ static int hx8394d_probe(struct mipi_dsi_device *dsi)
 	}
 #endif
 
-#if 0
-	backlight = of_parse_phandle(dev->of_node, "backlight", 0);
-	if (backlight) {
-		ctx->bl_dev = of_find_backlight_by_node(backlight);
-		of_node_put(backlight);
-
-		if (!ctx->bl_dev)
-			return -EPROBE_DEFER;
+	ctx->bl_dev = backlight_device_register("hx8394d_bl", dev, ctx,
+					&hx8394d_bl_ops, NULL);
+	if (IS_ERR(ctx->bl_dev)) {
+		dev_err(dev, "failed to register backlight device\n");
+		return PTR_ERR(ctx->bl_dev);
 	}
-#endif
+
+	ctx->bl_dev->props.max_brightness = 255;
+	ctx->bl_dev->props.brightness = 0;
+	ctx->bl_dev->props.power = FB_BLANK_POWERDOWN;
 
 	ctx->width_mm = WIDTH_MM;
 	ctx->height_mm = HEIGHT_MM;
