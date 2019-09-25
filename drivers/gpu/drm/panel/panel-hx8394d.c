@@ -76,7 +76,6 @@ static int __maybe_unused hx8394d_clear_error(struct hx8394d *ctx)
 	return ret;
 }
 
-#ifndef CONFIG_DRM_CHECK_PRE_INIT
 static void _dcs_write(struct hx8394d *ctx, const void *data, size_t len)
 {
 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
@@ -92,7 +91,6 @@ static void _dcs_write(struct hx8394d *ctx, const void *data, size_t len)
 		ctx->error = ret;
 	}
 }
-#endif
 
 static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data,
 				    size_t len)
@@ -125,35 +123,6 @@ static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data,
 	static const u8 d[] = { seq }; \
 	_dcs_write(ctx, d, ARRAY_SIZE(d)); \
 })
-
-static int hx8394d_dsi_get_display_brightness(struct backlight_device *bl_dev)
-{
-	return bl_dev->props.brightness;
-}
-
-static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
-{
-	struct hx8394d *ctx = (struct hx8394d *)bl_get_data(bl_dev);
-	int brightness = bl_dev->props.brightness;
-	u8 data[2] = { WRDISBV, };
-
-	if (!ctx->is_power_on) {
-		return -ENODEV;
-	}
-
-	if (brightness < 0 || brightness > 255)
-		return -EINVAL;
-
-	data[1] = brightness;
-	_dcs_write(ctx, data, 2);
-
-	return 0;
-}
-
-static const struct backlight_ops hx8394d_bl_ops = {
-	.get_brightness = hx8394d_dsi_get_display_brightness,
-	.update_status = hx8394d_dsi_set_display_brightness,
-};
 
 static void _set_sequence(struct hx8394d *ctx)
 {
@@ -313,6 +282,7 @@ static void _set_sequence(struct hx8394d *ctx)
 	hx8394d_dcs_write_seq(ctx, DISPON);
 	msleep(150);
 }
+
 #endif
 
 static int hx8394d_power_on(struct hx8394d *ctx)
@@ -490,6 +460,35 @@ static int hx8394d_parse_dt(struct hx8394d *ctx)
 
 	return 0;
 }
+
+static int hx8394d_dsi_get_display_brightness(struct backlight_device *bl_dev)
+{
+	return bl_dev->props.brightness;
+}
+
+static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
+{
+	struct hx8394d *ctx = (struct hx8394d *)bl_get_data(bl_dev);
+	int brightness = bl_dev->props.brightness;
+	u8 data[2] = { WRDISBV, };
+
+	if (!ctx->is_power_on) {
+		return -ENODEV;
+	}
+
+	if (brightness < 0 || brightness > 255)
+		return -EINVAL;
+
+	data[1] = brightness;
+	_dcs_write(ctx, data, 2);
+
+	return 0;
+}
+
+static const struct backlight_ops hx8394d_bl_ops = {
+	.get_brightness = hx8394d_dsi_get_display_brightness,
+	.update_status = hx8394d_dsi_set_display_brightness,
+};
 
 static int hx8394d_probe(struct mipi_dsi_device *dsi)
 {
