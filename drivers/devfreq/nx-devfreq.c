@@ -263,8 +263,10 @@ static int nx_devfreq_target(struct device *dev, unsigned long *freq, u32 flags)
 		goto unlock_and_return;
 	}
 
+#if 0 /* HBAHN */
 	if (is_up)
 		regulator_set_voltage(nx_devfreq->regulator, voltage, voltage);
+#endif /* HBAHN */
 
 	err = nx_change_bus_freq(pll_data);
 	if (err) {
@@ -272,8 +274,10 @@ static int nx_devfreq_target(struct device *dev, unsigned long *freq, u32 flags)
 		goto unlock_and_return;
 	}
 
+#if 0 /* HBAHN */
 	if (!is_up)
 		regulator_set_voltage(nx_devfreq->regulator, voltage, voltage);
+#endif /* HBAHN */
 
 	call_nx_qos_notifiers(*freq);
 
