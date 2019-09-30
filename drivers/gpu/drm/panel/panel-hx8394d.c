@@ -45,7 +45,7 @@
 #define DISPON			0x29
 
 #define MAX_BACKLIGHT_BRIGHTNESS 175
-#define MIN_BACKLIGHT_BRIGHTNESS 0
+#define MIN_BACKLIGHT_BRIGHTNESS 40
 #define DFL_BACKLIGHT_BRIGHTNESS 100
 
 struct hx8394d {
@@ -495,9 +495,10 @@ static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
 		return -ENODEV;
 	}
 
-	if (brightness < MIN_BACKLIGHT_BRIGHTNESS
-			|| brightness > MAX_BACKLIGHT_BRIGHTNESS) {
-		return -EINVAL;
+	if (brightness < MIN_BACKLIGHT_BRIGHTNESS) {
+		brightness = MIN_BACKLIGHT_BRIGHTNESS;
+	} else if (brightness > MAX_BACKLIGHT_BRIGHTNESS) {
+		brightness = MAX_BACKLIGHT_BRIGHTNESS;
 	}
 
 	data[0] = (u8)WRDISBV;
