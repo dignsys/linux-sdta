@@ -44,6 +44,10 @@
 #define SLPOUT			0x11
 #define DISPON			0x29
 
+#define MAX_BACKLIGHT_BRIGHTNESS 175
+#define MIN_BACKLIGHT_BRIGHTNESS 0
+#define DFL_BACKLIGHT_BRIGHTNESS 100
+
 struct hx8394d {
 	struct device *dev;
 	struct drm_panel panel;
@@ -58,10 +62,13 @@ struct hx8394d {
 	u32 width_mm;
 	u32 height_mm;
 	bool is_power_on;
+	int brightness;
 
 	struct backlight_device *bl_dev;
 	int error;
 };
+
+static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev);
 
 static inline struct hx8394d *panel_to_hx8394d(struct drm_panel *panel)
 {
@@ -128,7 +135,7 @@ static void _set_sequence(struct hx8394d *ctx)
 {
 	/* Datasheet: HX8394-D_DS_v02_150127.pdf */
 
-	static u8 d[24][64] = {
+	static u8 d[27][64] = {
 		/*
 		{data_length,
 		data0,data1,...
@@ -260,17 +267,27 @@ static void _set_sequence(struct hx8394d *ctx)
 		/* UNKNOWN Command */
 		{2,
 		0xDF,0x8E},
+
+		/* WRCABC: Write content adaptive brightness control (55h) */
+		{2,
+		0x55, 0x10},
+
+		/* WRCTRLD: Write control display (53h) */
+		{2,
+		0x53, 0x2C},
+
+		/* WRCABCMB: Write CABC minimum brightness (5Eh) */
+		{2,
+		0x5E, 0x00},
 	};
 	int i;
 	u8 *pd;
 
 	hx8394d_dcs_write_seq(ctx, DISPOFF);
-	msleep(150);
-
 	hx8394d_dcs_write_seq(ctx, SLPIN);
 	msleep(150);
 
-	for (i = 0; i < 24; ++i)
+	for (i = 0; i < 27; ++i)
 	{
 		pd = &d[i][0];
 		_dcs_write(ctx, pd + 1, pd[0]);
@@ -278,9 +295,7 @@ static void _set_sequence(struct hx8394d *ctx)
 
 	hx8394d_dcs_write_seq(ctx, SLPOUT);
 	msleep(150);
-
 	hx8394d_dcs_write_seq(ctx, DISPON);
-	msleep(150);
 }
 
 #endif
@@ -335,6 +350,8 @@ static int hx8394d_enable(struct drm_panel *panel)
 		backlight_update_status(ctx->bl_dev);
 	}
 
+	hx8394d_dcs_write_seq(ctx, DISPON);
+
 #if 0
 	if (ctx->enable_gpio > 0) {
 		gpio_direction_output(ctx->enable_gpio, 1);
@@ -353,6 +370,8 @@ static int hx8394d_disable(struct drm_panel *panel)
 		ctx->bl_dev->props.power = FB_BLANK_POWERDOWN;
 		backlight_update_status(ctx->bl_dev);
 	}
+
+	hx8394d_dcs_write_seq(ctx, DISPOFF);
 
 #if 0
 	if (ctx->enable_gpio > 0)
@@ -470,17 +489,23 @@ static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
 {
 	struct hx8394d *ctx = (struct hx8394d *)bl_get_data(bl_dev);
 	int brightness = bl_dev->props.brightness;
-	u8 data[2] = { WRDISBV, };
+	u8 data[2];
 
 	if (!ctx->is_power_on) {
 		return -ENODEV;
 	}
 
-	if (brightness < 0 || brightness > 255)
+	if (brightness < MIN_BACKLIGHT_BRIGHTNESS
+			|| brightness > MAX_BACKLIGHT_BRIGHTNESS) {
 		return -EINVAL;
+	}
 
-	data[1] = brightness;
+	data[0] = (u8)WRDISBV;
+	data[1] = (u8)((175 - brightness) + 80);
+
 	_dcs_write(ctx, data, 2);
+
+	ctx->brightness = brightness;
 
 	return 0;
 }
@@ -505,6 +530,7 @@ static int hx8394d_probe(struct mipi_dsi_device *dsi)
 	ctx->dev = dev;
 
 	ctx->is_power_on = false;
+	ctx->brightness = 0;
 	dsi->lanes = 4;
 	dsi->format = MIPI_DSI_FMT_RGB888;
 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO
@@ -557,8 +583,8 @@ static int hx8394d_probe(struct mipi_dsi_device *dsi)
 		return PTR_ERR(ctx->bl_dev);
 	}
 
-	ctx->bl_dev->props.max_brightness = 255;
-	ctx->bl_dev->props.brightness = 0;
+	ctx->bl_dev->props.max_brightness = MAX_BACKLIGHT_BRIGHTNESS;
+	ctx->bl_dev->props.brightness = DFL_BACKLIGHT_BRIGHTNESS;
 	ctx->bl_dev->props.power = FB_BLANK_POWERDOWN;
 
 	ctx->width_mm = WIDTH_MM;
