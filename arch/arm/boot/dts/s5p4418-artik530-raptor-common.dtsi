@@ -533,9 +533,11 @@
 
 	i2c_gpio7:i2c@7 {
 		compatible = "i2c-gpio";
-		gpios = <&gpio_e 8 0		/* SDA */
-			 &gpio_e 9 0		/* SCL */
-				>;
+
+		gpios = <&gpio_c 31 0        /* SDA */
+			&gpio_c 29 0        /* SCL */
+			>;
+
 		#address-cells = <1>;
 		#size-cells = <0>;
 		status = "okay";
@@ -940,8 +942,7 @@
 
 &dp_drm_hdmi {
 	ddc-i2c-bus = <&i2c_gpio7>;
-	enable-gpios = <&gpio_a 21 0>;
-	status = "disabled";
+	status = "okay";
 };
 
 #if 0 /* HBAHN */
