@@ -32,7 +32,7 @@
 			dcdc2	{ PMIC_PDATA_INIT( 1,
 				"nxe2000_dcdc2",
 				1000000, 1500000,
-				1200000, 1, 0, 0x4)
+				1050000, 1, 1, 0x4)
 				regulator-always-on;
 				regulator-boot-on;};
 		VCC_DCDC2:
