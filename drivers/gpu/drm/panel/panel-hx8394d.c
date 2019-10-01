@@ -43,10 +43,19 @@
 #define SLPIN			0x10
 #define SLPOUT			0x11
 #define DISPON			0x29
+#define DCSGETID1		0xDA
+#define DCSGETID2		0xDB
+#define DCSGETID3		0xDC
+
+#define MODULEID1		0x83
+#define MODULEID2       0x94
+#define MODULEID3       0x0D
 
 #define MAX_BACKLIGHT_BRIGHTNESS 175
 #define MIN_BACKLIGHT_BRIGHTNESS 80
 #define DFL_BACKLIGHT_BRIGHTNESS 100
+
+#define TEST_CHECK_PANEL_MODULE	0
 
 struct hx8394d {
 	struct device *dev;
@@ -68,7 +77,10 @@ struct hx8394d {
 	int error;
 };
 
-static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev);
+int hx8394d_dsi_get_display_brightness(struct backlight_device *bl_dev);
+int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev);
+static void _dcs_write(struct hx8394d *ctx, const void *data, size_t len);
+static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data, size_t len);
 
 static inline struct hx8394d *panel_to_hx8394d(struct drm_panel *panel)
 {
@@ -82,6 +94,29 @@ static int __maybe_unused hx8394d_clear_error(struct hx8394d *ctx)
 	ctx->error = 0;
 	return ret;
 }
+
+#if TEST_CHECK_PANEL_MODULE
+static bool _check_panel_module(struct hx8394d *ctx)
+{
+	u8 cmd[3] = { DCSGETID1, DCSGETID2, DCSGETID3 };
+	u8 id[3] = { MODULEID1, MODULEID2, MODULEID3 };
+	u8 val;
+	int i;
+	int err;
+
+	for (i = 0; i < 3; i++) {
+		err = _dcs_read(ctx, cmd[i], &val, 1);
+		printk("HSLEE:%s:%02x:%d\n", __FUNCTION__, val, err);
+		if (err < 0)
+			return false;
+
+		if (val != id[i])
+			return false;
+	}
+
+	return true;
+}
+#endif
 
 static void _dcs_write(struct hx8394d *ctx, const void *data, size_t len)
 {
@@ -99,8 +134,7 @@ static void _dcs_write(struct hx8394d *ctx, const void *data, size_t len)
 	}
 }
 
-static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data,
-				    size_t len)
+static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data, size_t len)
 {
 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
 	int ret;
@@ -116,6 +150,7 @@ static int __maybe_unused _dcs_read(struct hx8394d *ctx, u8 cmd, void *data,
 
 	return ret;
 }
+
 #ifndef CONFIG_DRM_CHECK_PRE_INIT
 #define hx8394d_dcs_write_seq(ctx, seq...) \
 ({ \
@@ -401,6 +436,13 @@ static int hx8394d_prepare(struct drm_panel *panel)
 	}
 #endif
 
+
+#if TEST_CHECK_PANEL_MODULE
+	if (!_check_panel_module(ctx)) {
+		return -ENOENT;
+	}
+#endif
+
 	return 0;
 }
 
@@ -480,12 +522,12 @@ static int hx8394d_parse_dt(struct hx8394d *ctx)
 	return 0;
 }
 
-static int hx8394d_dsi_get_display_brightness(struct backlight_device *bl_dev)
+int hx8394d_dsi_get_display_brightness(struct backlight_device *bl_dev)
 {
 	return bl_dev->props.brightness;
 }
 
-static int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
+int hx8394d_dsi_set_display_brightness(struct backlight_device *bl_dev)
 {
 	struct hx8394d *ctx = (struct hx8394d *)bl_get_data(bl_dev);
 	int brightness = bl_dev->props.brightness;
@@ -606,6 +648,7 @@ static int hx8394d_probe(struct mipi_dsi_device *dsi)
 		backlight_device_unregister(ctx->bl_dev);
 		drm_panel_remove(&ctx->panel);
 	}
+
 	return ret;
 }
 
