@@ -901,7 +901,7 @@
 &dp_drm_mipi {
 	hs_bitrate = <420>;
 	lp_bitrate = <100>;
-	status = "okay";
+	status = "ok";
 	skip_panel_check = <1>;
 
 	display-timing {
