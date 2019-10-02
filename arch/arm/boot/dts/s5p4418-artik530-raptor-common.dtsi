@@ -905,15 +905,15 @@
 	skip_panel_check = <1>;
 
 	display-timing {
-		clock-frequency = <65431680>;
+		clock-frequency = <81244800>;
 		hactive = <800>;
 		vactive = <1280>;
-		hfront-porch = <10>;
-		hback-porch = <30>;
+		hfront-porch = <110>;
+		hback-porch = <130>;
 		hsync-len = <8>;
-		vfront-porch = <2>;
-		vback-porch = <2>;
-		vsync-len = <2>;
+		vfront-porch = <12>;
+		vback-porch = <7>;
+		vsync-len = <3>;
 	};
 
 	panel@0 {
