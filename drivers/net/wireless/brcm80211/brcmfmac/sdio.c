@@ -3747,6 +3747,11 @@ brcmf_sdio_drivestrengthinit(struct brcmf_sdio_dev *sdiodev,
 		str_mask = 0x00001800;
 		str_shift = 11;
 		break;
+	case SDIOD_DRVSTR_KEY(BRCM_CC_4339_CHIP_ID, 23):
+		str_tab = sdiod_drive_strength_tab5_1v8;
+		str_mask = 0x00003800;
+		str_shift = 11;
+		break;
 	case SDIOD_DRVSTR_KEY(BRCM_CC_43143_CHIP_ID, 17):
 		/* note: 43143 does not support tristate */
 		i = ARRAY_SIZE(sdiod_drvstr_tab2_3v3) - 1;
