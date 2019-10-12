@@ -1269,7 +1269,10 @@ struct nx_gem_object *nx_drm_gem_create(struct drm_device *drm,
 	 * set memory type and
 	 * cache attribute from user side.
 	 */
-	nx_obj->flags = flags;
+	if (!__gem_is_cacheable(nx_obj->flags))
+		nx_obj->flags = NEXELL_BO_DMA;
+	else
+		nx_obj->flags = flags;
 
 	ret = nx_drm_gem_buf_alloc(nx_obj, size);
 	if (ret)
