@@ -18,6 +18,7 @@
 
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/gpio/gpio.h>
 #include "s5p6818-artik710.dtsi"
 
 #define PMIC_PDATA_INIT(_id, _rname, _minuv,	\
@@ -34,10 +35,12 @@
 
 / {
 	model = "Samsung artik710 raptor board based on s5p6818";
+	serial-number = "0003-sdta53";
 	compatible = "samsung,artik710-raptor", "samsung,artik710",
 		   "nexell,s5p6818";
 
 	aliases {
+		i2c1 = &i2c_1;
 		i2c3 = &i2c_gpio3;
 		i2c4 = &i2c_gpio4;
 		i2c5 = &i2c_gpio5;
@@ -45,8 +48,6 @@
 		i2c7 = &i2c_gpio7;
 		i2c8 = &i2c_gpio8;
 		i2c9 = &i2c_gpio9;
-		i2c10 = &i2c_gpio10;
-		i2c11 = &i2c_gpio11;
 	};
 
 	nx-v4l2 {
@@ -157,7 +158,7 @@
 			#size-cells = <0x0>;
 
 			snps,phy-addr = <3>;
-			snps,reset-gpio = <&gpio_a 12 0>;
+			snps,reset-gpio = <&alive_0 2 0>;
 			snps,reset-active-low;
 			snps,reset-delays-us = <0 10000 30000>;
 
@@ -199,19 +200,19 @@
 				PIN_OUT(gpioa-27, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpiob-9, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpiob-14, LOW, FUNC2, NONE, STR0);
-				PIN_OUT(gpioe-0, LOW, FUNC0, NONE, STR0);
-				PIN_OUT(gpioe-1, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-2, LOW, FUNC0, NONE, STR0);
 
 				/* NC */
-				PIN_OUT(gpiob-27, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-1, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-2, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-4, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-7, LOW, FUNC1, NONE, STR0);
 				PIN_OUT(gpioc-24, LOW, FUNC1, NONE, STR0);
+				PIN_OUT(gpioc-28, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-12, LOW, FUNC0, NONE, STR0);
 				PIN_OUT(gpioe-13, LOW, FUNC0, NONE, STR0);
+				PIN_OUT(gpioe-22, LOW, FUNC0, NONE, STR0);
+				PIN_OUT(gpioe-23, LOW, FUNC0, NONE, STR0);
 
 				/* Led & Switch */
 				PIN_OUT(gpioa-28, LOW, FUNC0, NONE, STR0);
@@ -222,21 +223,57 @@
 				/* Etc */
 				PIN_IN(gpioa-10, FUNC0, NONE, STR0);
 				PIN_IN(gpioa-11, FUNC0, NONE, STR0);
+				PIN_IN(gpiob-27, FUNC1, NONE, STR0);
 				PIN_IN(gpiod-8, FUNC0, NONE, STR0);
 			};
 
-			key_pwr:key_pwr {
-				nexell,pins = "alive-1";
-				nexell,pin-function = <NX_PIN_FUNC0>;
-				nexell,pin-pull = <NX_PIN_PULL_UP>;
-				nexell,pin-strength = <NX_PIN_STR0>;
+			key_power:key_power {
+				nexell,pins = "alive-0";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
 			};
 
-			key_wakeup:key_wakeup {
-				nexell,pins = "alive-2";
-				nexell,pin-function = <NX_PIN_FUNC0>;
-				nexell,pin-pull = <NX_PIN_PULL_UP>;
-				nexell,pin-strength = <NX_PIN_STR0>;
+			key_homepage:key_homepage {
+				nexell,pins = "gpiod-28";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_enter:key_enter {
+				nexell,pins = "gpiod-29";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_volup:key_volup {
+				nexell,pins = "gpiod-30";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_voldown:key_voldown {
+				nexell,pins = "gpiod-31";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+			};
+
+			key_func1:key_func1 {
+				nexell,pins = "gpioe-0";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
+            		};
+
+			key_func2:key_func2 {
+				nexell,pins = "gpioe-1";
+				nexell,pin-function = <0>;
+				nexell,pin-pull = <1>;
+				nexell,pin-strength = <0>;
 			};
 
 			pmic_irq:pmic_irq{
@@ -265,6 +302,26 @@
 				nexell,pin-function = <NX_PIN_FUNC0>;
 				nexell,pin-pull = <NX_PIN_PULL_UP>;
 				nexell,pin-strength = <NX_PIN_STR0>;
+			};
+
+			bt_cfg_reg_on: bt_cfg_reg_on {
+				nexell,pins = "gpiob-18";
+				nexell,pin-function = <NX_PIN_FUNC2>;
+				nexell,pin-pull = <NX_PIN_PULL_NONE>;
+				nexell,pin-strength = <NX_PIN_STR0>;
+			};
+
+			bt_cfg_hostwake:bt_cfg_hostwake {
+				nexell,pins = "gpiob-14";
+				nexell,pin-function = <2>;
+				nexell,pin-pull = <0>;
+				nexell,pin-strength = <0>;
+			};
+			bt_cfg_btwake:bt_cfg_btwake {
+				nexell,pins = "gpiob-16";
+				nexell,pin-function = <2>;
+				nexell,pin-pull = <2>;
+				nexell,pin-strength = <0>;
 			};
 		};
 
@@ -304,14 +361,14 @@
 			data_lane = <2>;
 			pllval = <750>;
 			hssettle = <7 7 7 7>;
-			status = "okay";
+			status = "disabled";
 		};
 
 		clipper_0:clipper0@c0063000 {
 			interface_type = <NX_CAPTURE_INTERFACE_MIPI_CSI>;
 			gpios = <&gpio_a 17 0 &gpio_a 3 0 &gpio_a 6 0>;
 			data_order = <NX_VIN_Y0CBY1CR>;
-			status = "okay";
+			status = "disabled";
 			sensor {
 				type = <NX_CAPTURE_SENSOR_I2C>;
 				i2c_name = "S5K4ECGA";
@@ -357,42 +414,113 @@
 		status = "okay";
 	};
 
+	wifi32k: wifi32k {
+		compatible = "pwm-clock";
+		#clock-cells = <0>;
+		clock-frequency = <32768>;
+		pwms = <&pwm 0 30518 0>;
+	};
+
+	wifi_pwrseq: wifi-pwrseq {
+		compatible = "mmc-pwrseq-simple";
+		reset-gpios = <&gpio_b 12 GPIO_ACTIVE_LOW>;
+		post-power-on-delay-ms = <700>;
+		power-off-delay-us = "60";
+//		clocks = <&wifi32k>;
+//		clock-names = "lpo";
+	};
+
+	bt_control {
+		compatible = "broadcom,bcm43xxbt";
+		pinctrl-names = "bt cfg";
+		pinctrl-0 = <&bt_cfg_reg_on &bt_cfg_hostwake &bt_cfg_btwake>;
+		bt_en-gpio = <&gpio_b 18 1>; /* GPIOB18 = BT_EN */
+		bt_wake-gpio = <&gpio_b 16 0>;	/* GPIOB16 = BT_WAKE */
+		bt_hostwake-gpio = <&gpio_b 14 0>;	/* GPIOB14 = BT_HOST_WAKE */
+		status = "okay";
+	};
+
+#if 0 /* HBAHN */
 	panel: panel-simple {
 		compatible = "dongguan,gst7d0038";
 		backlight = <&backlight>;
-		status = "okay";
+		status = "disabled";
 
 		port {
 			lvds_panel: endpoint {
 			};
 		};
 	};
+#endif /* HBAHN */
 
-	i2c_gpio6:i2c@6 {
+	i2c_gpio4: i2c@4 {
 		compatible = "i2c-gpio";
 		gpios = <&gpio_a 5 0 /* sda */
 			&gpio_a 4 0 /* scl */
+			>;
+		i2c-gpio,delay-us = <100>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+	};
+
+
+	i2c_gpio5: i2c@5 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio_d 14 0	/* sda */
+			&gpio_d 18 0	/* scl */
 			>;
 		i2c-gpio,delay-us = <10>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		alc5658: alc5658@1a {
+#if 0 /* HBAHN */
+		usb3503: usb3503@08 {
+			compatible = "smsc,usb3503";
+			reg = <0x08>;
+			intn-gpios = <&gpio_b 23 0>;
+			connect-gpios = <&gpio_a 18 0>;
+			reset-gpios = <&gpio_a 22 0>;
+			initial-mode = <1>;
+		};
+#endif /* HBAHN */
+	};
+
+	i2c_gpio6:i2c@6 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio_e 6 0	/* SDA */
+			 &gpio_e 5 0	/* SCL */
+			>;
+		i2c-gpio,delay-us = <1>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		/* sound codec */
+		alc5623: alc5623@1a {
 			#sound-dai-cells = <0>;
-			compatible = "realtek,rt5658";
+			compatible = "realtek,alc5623";
 			reg = <0x1a>;
+		};
+
+		/* RTC provided by Seiko S-35390A I2C RTC chip */
+		s35390a: s35390a@30 {
+			status = "okay";
+			compatible = "sii,s35390a";
+			reg = <0x30>;
 		};
 	};
 
 	i2c_gpio7:i2c@7 {
 		compatible = "i2c-gpio";
-		gpios = <&gpio_a 24 0 /* sda */
-			&gpio_a 23 0 /* scl */
+
+		gpios = <&gpio_c 31 0        /* SDA */
+			&gpio_c 29 0        /* SCL */
 			>;
-		i2c-gpio,delay-us = <100>;
+
 		#address-cells = <1>;
 		#size-cells = <0>;
-	};
+		status = "okay";
+	}; /* i2c_gpio7 */
 
 	sound {
 		compatible = "simple-audio-card";
@@ -415,7 +543,7 @@
 		    };
 
 		    codec {
-			sound-dai = <&alc5658>;
+			sound-dai = <&alc5623>;
 		    };
 		};
 
@@ -430,73 +558,57 @@
 		};
 	};
 
-	i2c_gpio4: i2c@4 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_b 30 0 /* sda */
-			&gpio_b 31 0 /* scl */
-			>;
-		i2c-gpio,delay-us = <1>;    /* ~100 kHz */
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		usb3503: usb3503@08 {
-			compatible = "smsc,usb3503";
-			reg = <0x08>;
-			intn-gpios = <&gpio_b 23 0>;
-			connect-gpios = <&gpio_a 18 0>;
-			reset-gpios = <&gpio_a 22 0>;
-			initial-mode = <1>;
-		};
-	};
-
-	i2c_gpio5: i2c@5 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_d 31 0	/* sda */
-			&gpio_e 3 0	/* scl */
-			>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		i2c-gpio,delay-us = <100>;
-
-		rtc@68 {
-			compatible = "maxim,ds1337";
-			reg = <0x68>;
-			interrupt-parent = <&alive_0>;
-			interrupts = <0x2 IRQ_TYPE_EDGE_FALLING>;
-			/* If it's first boot, reset to 4/29/2016(Fri) UTC */
-			init_time,year = <116>;
-			init_time,mon = <3>;
-			init_time,mday = <29>;
-			init_time,wday = <5>;
-		};
-	};
-
 	gpio_key: gpio_keys {
 		compatible = "gpio-keys";
 		#address-cells = <1>;
 		#size-cells = <0>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&key_pwr>, <&key_wakeup>;
+		pinctrl-0 = <&key_power &key_func1 &key_func2>,
+			<&key_homepage &key_enter &key_volup &key_voldown>;
 
 		power {
 			label = "Power";
-			gpios = <&alive_0 0 1>;
+			gpios = <&alive_0 0 0>;
 			linux,code = <KEY_POWER>;
 			gpio-key,wakeup;
 		};
 
-		wakeup {
-			label = "Wakeup";
-			gpios = <&alive_0 1 1>;
-			linux,code = <KEY_WAKEUP>;
+		back {
+			label = "Back";
+			gpios = <&gpio_e 0 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_BACK>;
+		};
+
+		menu {
+			label = "Menu";
+			gpios = <&gpio_e 1 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_MENU>;
+		};
+
+		home {
+			label = "Home";
+			gpios = <&gpio_d 28 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_HOME>;
 			gpio-key,wakeup;
 		};
 
-		keyback {
-			label = "Back";
-			gpios = <&gpio_a 30 1>;
-			linux,code = <KEY_BACK>;
-			gpio-key;
+		key_enter {
+			label = "Enter";
+			gpios = <&gpio_d 29 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_ENTER>;
+			gpio-key,wakeup;
+		};
+
+		key_volup {
+			label = "Volume Up";
+			gpios = <&gpio_d 30 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_VOLUMEUP>;
+		};
+
+		key_voldown {
+			label = "Volume Down";
+			gpios = <&gpio_d 31 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_VOLUMEDOWN>;
 		};
 	};
 
@@ -506,7 +618,13 @@
 	};
 
 	i2c_gpio3: i2c@3 {
-		status = "disabled";
+		compatible = "i2c-gpio";
+		gpios = <&gpio_c 16 0		/* SDA */
+			 &gpio_c 15 0		/* SCL */
+				>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
 	};
 
 	i2c_gpio8: i2c@8 {
@@ -553,44 +671,13 @@
 		#size-cells = <0>;
 		status = "okay";
 
+#if 0 /* HBAHN */
 		bq24296_charger@6b {
 			compatible = "ti,bq24296";
 			reg = <0x6b>;
 			ti,chg_current = <1000 1500 2000>;
 		};
-	};
-
-	i2c_gpio10: i2c@10 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_c 16 0	/* sda */
-			&gpio_c 15 0	/* scl */
-			>;
-
-		i2c-gpio,delay-us = <1>;	/* ~100kHz */
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "okay";
-
-		nxe2000@32 {
-			compatible = "nexell,nxe2000";
-			reg = <0x32>;
-			interrupt-parent = <&alive_0>;
-			interrupts = <0x5 IRQ_TYPE_EDGE_FALLING>;
-			pinctrl-names = "default";
-			pinctrl-0 = <&pmic_irq>;
-		};
-	};
-
-	i2c_gpio11: i2c@11 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_b 18 0	/* sda */
-			&gpio_b 11 0	/* scl */
-			>;
-
-		i2c-gpio,delay-us = <1>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "okay";
+#endif /* HBAHN */
 	};
 
 	regulators {
@@ -730,34 +817,35 @@
 };
 
 &i2c_1 {
+	#address-cells = <1>;
+	#size-cells = <0>;
 	status = "okay";
+
+	nxe2000@32 {
+		compatible = "nexell,nxe2000";
+		reg = <0x32>;
+		interrupt-parent = <&alive_0>;
+		interrupts = <0x4 IRQ_TYPE_EDGE_FALLING>;
+	};
 };
 
 &i2c_2 {
 	#address-cells = <1>;
 	#size-cells = <0>;
+	rate = <400000>;
 	status = "okay";
 
-	touchscreen@4a {
-		compatible = "atmel,maxtouch";
-		reg = <0x4a>;
-		interrupt-parent = <&gpio_b>;
-		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&touchpanel_irq>;
-		skip-cfg-load;
-		switch-xy;
-	};
-
-	touchscreen@20 {
-		compatible = "zinitix,zinitix_touch";
-		reg = <0x20>;
-		interrupt-parent = <&gpio_b>;
+	/* touch screen */
+	goodix@5d {
+		compatible = "goodix,gt911";
+		reg = <0x5d>;
+		interrupt-parent = <&gpio_d>;
 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
-		reset-gpio = <&gpio_c 25 1>;
-		int-gpio = <&gpio_b 8 0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&tsp_irq &tsp_reset>;
+		irq-gpios = <&gpio_d 8 0>;
+		reset-gpios = <&gpio_b 0 0>;
+		touchscreen-inverted-x;
+//		touchscreen-inverted-y;
+//		touchscreen-swapped-x-y;
 	};
 };
 
@@ -788,7 +876,7 @@
 &dp_drm_mipi {
 	hs_bitrate = <960>;
 	lp_bitrate = <100>;
-	status = "ok";
+	status = "disabled";
 
 	panel@0 {
 		compatible = "samsung,s6e8fa0";
@@ -836,8 +924,9 @@
 	q_range = <0>;
 };
 
+#if 0 /* HBAHN */
 &dp_drm_lvds {
-	status = "ok";
+	status = "disabled";
 
 	remote-endpoint = <&lvds_panel>;
 
@@ -849,7 +938,55 @@
 		out_format = <3>;
 	};
 };
+#endif /* HBAHN */
 
 &decimator_0 {
+	status = "disabled";
+};
+
+&dw_mmc_1 {
+	pinctrl-names = "default";
+	mmc-pwrseq = <&wifi_pwrseq>;
+
+	cap-sd-highspeed;
+	cap-sdio-irq;
+	mmc-ddr-3_3v;
+	broken-cd;
+	non-removable;
+	disable-wp;
+
+	nexell,drive_dly = <0x0>;
+	nexell,drive_shift = <0x03>;
+	nexell,sample_dly = <0x00>;
+	nexell,sample_shift = <0x02>;
+
+	clock-frequency = <400000000>;
 	status = "okay";
+
+	brcmf: wifi@1 {
+		reg = <1>;
+		compatible = "brcm,bcm4329-fmac";
+		interrupt-parent = <&gpio_b>;
+		interrupts = <11 IRQ_TYPE_LEVEL_HIGH>; 
+		interrupt-names = "host-wake";
+		brcm,drive-strength = <6>;
+	};
+};
+
+&dw_mmc_2 {
+	num-slots = <1>;
+	bus-width = <4>;
+	cap-sd-highspeed;
+	clock-frequency = <400000000>;
+	card-detect-delay = <200>;
+	disable-wp;
+	cd-inverted;
+	nexell,drive_dly = <0x0>;
+	nexell,drive_shift = <0x02>;
+	nexell,sample_dly = <0x00>;
+	cd-gpios = <&gpio_c 17 0>;
+	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc2_cclk &sdmmc2_cmd &sdmmc2_bus4>;
 };

@@ -76,7 +76,7 @@
 			};
 		};
 
-		dw_mmc_2:dw_mmc@c0069000 {
+		dw_mmc_0:dw_mmc@c0062000 {
 			num-slots = <1>;
 			bus-width = <4>;
 			cap-mmc-highspeed;
@@ -189,6 +189,7 @@
 		};
 	};	/*** soc ***/
 
+#if 0 /* HBAHN */
 	artik_zb_power {
 		compatible = "samsung,artik_zb_power";
 		vdd_zb-supply = <&VCC_DCDC2>;
@@ -222,8 +223,10 @@
 			 &alive_0 3 1>; /* WLAN_HOST_WAKE */
 		status = "okay";
 	};
+#endif /* HBAHN */
 };
 
+#if 0 /* HBAHN */
 &dw_mmc_1 {
 	num-slots = <1>;
 	bus-width = <4>;
@@ -244,6 +247,7 @@
 		     &cfg_wlanen &cfg_wlanhostwake>;
 	status = "okay";
 };
+#endif /* HBAHN */
 
 &spi2_bus {
 	nexell,pin-strength = <NX_PIN_STR1>;
