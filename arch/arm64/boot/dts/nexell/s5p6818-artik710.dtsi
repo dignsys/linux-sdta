@@ -189,65 +189,7 @@
 		};
 	};	/*** soc ***/
 
-#if 0 /* HBAHN */
-	artik_zb_power {
-		compatible = "samsung,artik_zb_power";
-		vdd_zb-supply = <&VCC_DCDC2>;
-		reset-gpio = <&gpio_c 8 0>;
-		bootloader-gpio = <&gpio_c 28 0>;
-		status = "okay";
-	};
-
-	artik_bt_control {
-		compatible = "broadcom,bcm43455bt";
-		gpios = <&gpio_d 29 0	/* GPIOD29=BT_EN, output */
-			&gpio_d 30 0		/* GPIOD30=BT_WAKE, output */
-			&alive_0 4 1		/* AliveGPIO4=BT_HOST_WAKE, input */
-			>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&bt_cfg_hostwake &bt_cfg_btwake &bt_cfg_en>;
-		status = "okay";
-	};
-
-	artik_s3t9mf {
-		compatible = "samsung,s3t9mf";
-		reset-gpio = <&gpio_b 26 0>;
-		pwms = <&pwm 1 1000 0>;
-		pwm-names = "pwm_t9mf";
-		status = "okay";
-	};
-
-	wlan {
-		compatible = "samsung,brcm-wlan";
-		gpios = <&gpio_d 28 0  /* WLAN_EN */
-			 &alive_0 3 1>; /* WLAN_HOST_WAKE */
-		status = "okay";
-	};
-#endif /* HBAHN */
 };
-
-#if 0 /* HBAHN */
-&dw_mmc_1 {
-	num-slots = <1>;
-	bus-width = <4>;
-	cap-sd-highspeed;
-	cd-type-external;
-	broken-cd;
-	pm-ignore-notify;
-	keep-power-in-suspend;
-	powered-resumed-nonremovable-card;
-	cd-type = <2>;
-	clock-frequency = <100000000>;
-	nexell,drive_dly = <0x0>;
-	nexell,drive_shift = <0x02>;
-	nexell,sample_dly = <0x00>;
-	nexell,sample_shift = <0x01>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&sdmmc1_cclk &sdmmc1_cmd &sdmmc1_bus4
-		     &cfg_wlanen &cfg_wlanhostwake>;
-	status = "okay";
-};
-#endif /* HBAHN */
 
 &spi2_bus {
 	nexell,pin-strength = <NX_PIN_STR1>;

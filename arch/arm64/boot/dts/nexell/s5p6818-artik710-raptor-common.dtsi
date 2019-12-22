@@ -41,7 +41,9 @@
 
 	aliases {
 		i2c1 = &i2c_1;
+#if 0
 		i2c3 = &i2c_gpio3;
+#endif
 		i2c4 = &i2c_gpio4;
 		i2c5 = &i2c_gpio5;
 		i2c6 = &i2c_gpio6;
@@ -426,8 +428,6 @@
 		reset-gpios = <&gpio_b 12 GPIO_ACTIVE_LOW>;
 		post-power-on-delay-ms = <700>;
 		power-off-delay-us = "60";
-//		clocks = <&wifi32k>;
-//		clock-names = "lpo";
 	};
 
 	bt_control {
@@ -440,7 +440,6 @@
 		status = "okay";
 	};
 
-#if 0 /* HBAHN */
 	panel: panel-simple {
 		compatible = "dongguan,gst7d0038";
 		backlight = <&backlight>;
@@ -451,7 +450,6 @@
 			};
 		};
 	};
-#endif /* HBAHN */
 
 	i2c_gpio4: i2c@4 {
 		compatible = "i2c-gpio";
@@ -474,7 +472,6 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-#if 0 /* HBAHN */
 		usb3503: usb3503@08 {
 			compatible = "smsc,usb3503";
 			reg = <0x08>;
@@ -482,8 +479,8 @@
 			connect-gpios = <&gpio_a 18 0>;
 			reset-gpios = <&gpio_a 22 0>;
 			initial-mode = <1>;
+			status = "disabled";
 		};
-#endif /* HBAHN */
 	};
 
 	i2c_gpio6:i2c@6 {
@@ -617,6 +614,7 @@
 		compatible = "linux,spdif-dit";
 	};
 
+#if 0 /* conflict with peripheral-io GPIOs */
 	i2c_gpio3: i2c@3 {
 		compatible = "i2c-gpio";
 		gpios = <&gpio_c 16 0		/* SDA */
@@ -626,6 +624,7 @@
 		#size-cells = <0>;
 		status = "okay";
 	};
+#endif
 
 	i2c_gpio8: i2c@8 {
 		compatible = "i2c-gpio";
@@ -671,13 +670,12 @@
 		#size-cells = <0>;
 		status = "okay";
 
-#if 0 /* HBAHN */
 		bq24296_charger@6b {
 			compatible = "ti,bq24296";
 			reg = <0x6b>;
 			ti,chg_current = <1000 1500 2000>;
+			status = "disabled";
 		};
-#endif /* HBAHN */
 	};
 
 	regulators {
@@ -846,6 +844,7 @@
 		touchscreen-inverted-x;
 //		touchscreen-inverted-y;
 //		touchscreen-swapped-x-y;
+		status = "disabled";
 	};
 };
 
@@ -924,7 +923,6 @@
 	q_range = <0>;
 };
 
-#if 0 /* HBAHN */
 &dp_drm_lvds {
 	status = "disabled";
 
@@ -938,7 +936,6 @@
 		out_format = <3>;
 	};
 };
-#endif /* HBAHN */
 
 &decimator_0 {
 	status = "disabled";
