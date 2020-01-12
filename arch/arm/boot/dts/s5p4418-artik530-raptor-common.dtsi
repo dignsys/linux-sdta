@@ -311,7 +311,7 @@
 			#sound-dai-cells = <1>;
 			pcm-bit = <16>;
 			sample_rate = <48000>;
-			status = "disabled";
+			status = "ok";
 		};
 
 		i2s_0:i2s@c0055000 {
@@ -534,7 +534,7 @@
 		compatible = "i2c-gpio";
 
 		gpios = <&gpio_c 31 0        /* SDA */
-			&gpio_c 29 0        /* SCL */
+			 &gpio_c 29 0        /* SCL */
 			>;
 
 		#address-cells = <1>;
@@ -603,10 +603,9 @@
 		    "Headphone", "Out Jack",
 		    "Microphone", "In Jack";
 		simple-audio-card,routing =
-		    "Out Jack", "HPOL",
-		    "Out Jack", "HPOR",
-		    "IN2P", "In Jack",
-		    "IN2P", "In Jack";
+		    "Out Jack", "SPKOUT",
+		    "Out Jack", "SPKOUTN",
+		    "MIC1", "In Jack";
 		status = "okay";
 
 		simple-audio-card,dai-link@0 {
