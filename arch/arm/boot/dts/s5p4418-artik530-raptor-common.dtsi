@@ -603,8 +603,10 @@
 		    "Headphone", "Out Jack",
 		    "Microphone", "In Jack";
 		simple-audio-card,routing =
-		    "Out Jack", "SPKOUT",
-		    "Out Jack", "SPKOUTN",
+		    "Out Jack", "HPL",
+		    "Out Jack", "HPR",
+		    "Out Jack", "LINEINL",
+		    "Out Jack", "LINEINR",
 		    "MIC1", "In Jack";
 		status = "okay";
 
