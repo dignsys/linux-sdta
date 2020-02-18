@@ -26,6 +26,7 @@
 #include <linux/io.h>
 #include <linux/slab.h>
 #include <linux/of_platform.h>
+#include <linux/extcon.h>
 
 #include <linux/usb/ch9.h>
 #include <linux/usb/gadget.h>
@@ -3509,6 +3510,10 @@ static void dwc2_hsotg_of_probe(struct dwc2_hsotg *hsotg)
 	/* Enable dma if requested in device tree */
 	hsotg->g_using_dma = of_property_read_bool(np, "g-use-dma");
 
+#if IS_ENABLED(CONFIG_EXTCON)
+	hsotg->g_extcon_always_on =
+		of_property_read_bool(np, "g-extcon-always-on");
+#endif
 	/*
 	* Register TX periodic fifo size per endpoint.
 	* EP0 is excluded since it has no fifo configuration.
@@ -3666,6 +3671,25 @@ int dwc2_gadget_init(struct dwc2_hsotg *hsotg, int irq)
 	}
 	dwc2_hsotg_dump(hsotg);
 
+#if IS_ENABLED(CONFIG_EXTCON)
+	if (hsotg->g_extcon_always_on) {
+		struct extcon_dev *edev;
+		static const unsigned int supported_cable[] = {
+			EXTCON_USB,
+			EXTCON_NONE,
+		};
+
+		edev = devm_extcon_dev_allocate(dev, supported_cable);
+		if (IS_ERR(edev))
+			return PTR_ERR(edev);
+
+		ret = devm_extcon_dev_register(dev, edev);
+		if (ret)
+			return ret;
+
+		extcon_set_cable_state_(edev, EXTCON_USB, true);
+	}
+#endif
 	return 0;
 }
 

@@ -872,6 +872,9 @@ struct dwc2_hsotg {
 	u32 g_rx_fifo_sz;
 	u32 g_np_g_tx_fifo_sz;
 	u32 g_tx_fifo_sz[MAX_EPS_CHANNELS];
+#if IS_ENABLED(CONFIG_EXTCON)
+	bool g_extcon_always_on;
+#endif
 #endif /* CONFIG_USB_DWC2_PERIPHERAL || CONFIG_USB_DWC2_DUAL_ROLE */
 };
 
