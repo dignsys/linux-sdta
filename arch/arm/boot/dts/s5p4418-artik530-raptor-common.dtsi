@@ -129,7 +129,7 @@
 
 		dwc2otg@c0040000 {
 			gpios = <&alive_0 5 0>;
-			nouse_idcon = <1>;
+			g-extcon-always-on;
 			status = "okay";
 		};
 
