@@ -451,6 +451,18 @@
 		};
 	};
 
+#if 0 /* conflict with peripheral-io GPIOs */
+	i2c_gpio3: i2c@3 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio_c 16 0		/* SDA */
+			 &gpio_c 15 0		/* SCL */
+				>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+	};
+#endif
+
 	i2c_gpio4: i2c@4 {
 		compatible = "i2c-gpio";
 		gpios = <&gpio_a 5 0 /* sda */
@@ -507,17 +519,69 @@
 		};
 	};
 
-	i2c_gpio7:i2c@7 {
+	i2c_gpio7:i2c@7 {	/* used on HDMI */
 		compatible = "i2c-gpio";
 
 		gpios = <&gpio_c 31 0        /* SDA */
-			&gpio_c 29 0        /* SCL */
+			 &gpio_c 29 0        /* SCL */
 			>;
 
 		#address-cells = <1>;
 		#size-cells = <0>;
 		status = "okay";
 	}; /* i2c_gpio7 */
+
+	i2c_gpio8: i2c@8 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio_a 13 0	/* sda */
+			&gpio_a 9 0		/* scl */
+			>;
+		i2c-gpio,delay-us = <1>;	/* ~100kHz */
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+
+		cw2015@62 {
+			compatible = "cw201x";
+			reg = <0x62>;
+
+			bat_config_info = <0x15 0x4C 0x78 0x48 0x25
+				0x16 0x45 0x60 0x67 0x5D
+        		        0x56 0x4C 0x58 0x58 0x53
+				0x57 0x59 0x5C 0x5E 0x65
+                		0x57 0x6C 0x78 0x75 0x85
+				0x91 0x07 0xAE 0x74 0xA4
+                		0x96 0xA3 0xC1 0xC2 0xD2
+				0xBF 0x40 0x1F 0x98 0x19
+                		0x05 0x38 0x48 0x79 0x8D
+				0x92 0x92 0x23 0x73 0x80
+                		0x94 0xB0 0x37 0xC1 0x91
+				0xCB 0x2F 0x7D 0x72 0xA5
+				0xB5 0xC1 0x15 0x09>;
+
+			is_dc_charge = <1>;
+			is_usb_charge = <0>;
+		};
+
+	};
+
+	i2c_gpio9: i2c@9 {
+		compatible = "i2c-gpio";
+		gpios = <&gpio_a 19 0	/* sda */
+			&gpio_a 20 0	/* scl */
+			>;
+		i2c-gpio,delay-us = <1>;	/* ~100kHz */
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+
+		bq24296_charger@6b {
+			compatible = "ti,bq24296";
+			reg = <0x6b>;
+			ti,chg_current = <1000 1500 2000>;
+			status = "disabled";
+		};
+	};
 
 	sound {
 		compatible = "simple-audio-card";
@@ -527,10 +591,11 @@
 		    "Headphone", "Out Jack",
 		    "Microphone", "In Jack";
 		simple-audio-card,routing =
-		    "Out Jack", "HPOL",
-		    "Out Jack", "HPOR",
-		    "IN2P", "In Jack",
-		    "IN2P", "In Jack";
+		    "Out Jack", "HPL",
+		    "Out Jack", "HPR",
+		    "Out Jack", "LINEINL",
+		    "Out Jack", "LINEINR",
+		    "MIC1", "In Jack";
 		status = "okay";
 
 		simple-audio-card,dai-link@0 {
@@ -612,70 +677,6 @@
 	spdif_out: spdif-out {
 		#sound-dai-cells = <0>;
 		compatible = "linux,spdif-dit";
-	};
-
-#if 0 /* conflict with peripheral-io GPIOs */
-	i2c_gpio3: i2c@3 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_c 16 0		/* SDA */
-			 &gpio_c 15 0		/* SCL */
-				>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "okay";
-	};
-#endif
-
-	i2c_gpio8: i2c@8 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_a 13 0	/* sda */
-			&gpio_a 9 0		/* scl */
-			>;
-		i2c-gpio,delay-us = <1>;	/* ~100kHz */
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "okay";
-
-		cw2015@62 {
-			compatible = "cw201x";
-			reg = <0x62>;
-
-			bat_config_info = <0x15 0x4C 0x78 0x48 0x25
-				0x16 0x45 0x60 0x67 0x5D
-                0x56 0x4C 0x58 0x58 0x53
-				0x57 0x59 0x5C 0x5E 0x65
-                0x57 0x6C 0x78 0x75 0x85
-				0x91 0x07 0xAE 0x74 0xA4
-                0x96 0xA3 0xC1 0xC2 0xD2
-				0xBF 0x40 0x1F 0x98 0x19
-                0x05 0x38 0x48 0x79 0x8D
-				0x92 0x92 0x23 0x73 0x80
-                0x94 0xB0 0x37 0xC1 0x91
-				0xCB 0x2F 0x7D 0x72 0xA5
-				0xB5 0xC1 0x15 0x09>;
-
-			is_dc_charge = <1>;
-			is_usb_charge = <0>;
-		};
-
-	};
-
-	i2c_gpio9: i2c@9 {
-		compatible = "i2c-gpio";
-		gpios = <&gpio_a 19 0	/* sda */
-			&gpio_a 20 0	/* scl */
-			>;
-		i2c-gpio,delay-us = <1>;	/* ~100kHz */
-		#address-cells = <1>;
-		#size-cells = <0>;
-		status = "okay";
-
-		bq24296_charger@6b {
-			compatible = "ti,bq24296";
-			reg = <0x6b>;
-			ti,chg_current = <1000 1500 2000>;
-			status = "disabled";
-		};
 	};
 
 	regulators {
