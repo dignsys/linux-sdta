@@ -923,6 +923,11 @@
 	enable-gpios = <&gpio_a 21 0>;
 	status = "ok";
 	q_range = <0>;
+
+	mode {
+		width = <1280>;
+		height = <720>;
+	};
 };
 
 &dp_drm_lvds {
