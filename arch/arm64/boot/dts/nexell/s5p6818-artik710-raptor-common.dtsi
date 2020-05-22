@@ -692,7 +692,7 @@
 			dcdc2	{ PMIC_PDATA_INIT( 1,
 				"nxe2000_dcdc2",
 				1000000, 1500000,
-				1200000, 1, 0, 0x4)
+				1100000, 1, 0, 0x4)
 				regulator-always-on;
 				regulator-boot-on;};
 		VCC_DCDC2:
@@ -706,14 +706,14 @@
 			dcdc4	{ PMIC_PDATA_INIT( 3,
 				"nxe2000_dcdc4",
 				1000000, 2000000,
-				1500000, 1, 0, 0xF)
+				1350000, 1, 0, 0xF)
 				regulator-always-on;
 				regulator-boot-on;};
 		VCC_DCDC4:
 			dcdc5	{ PMIC_PDATA_INIT( 4,
 				"nxe2000_dcdc5",
 				1000000, 2000000,
-				1500000, 1, 0, 0x4)
+				1350000, 1, 0, 0x4)
 				regulator-always-on;
 				regulator-boot-on;};
 		VCC_LDO0:
@@ -960,11 +960,11 @@
 	disable-wp;
 
 	nexell,drive_dly = <0x0>;
-	nexell,drive_shift = <0x02>;
+	nexell,drive_shift = <0x03>;
 	nexell,sample_dly = <0x00>;
-	nexell,sample_shift = <0x01>;
+	nexell,sample_shift = <0x02>;
 
-	clock-frequency = <100000000>;
+	clock-frequency = <200000000>;
 	status = "okay";
 
 	brcmf: wifi@1 {
